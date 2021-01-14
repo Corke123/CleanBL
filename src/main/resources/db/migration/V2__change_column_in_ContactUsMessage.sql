@@ -1,0 +1,1 @@
+ALTER TABLE ContactUsMessage CHANGE `read` seen BOOL;

@@ -1,0 +1,1 @@
+ALTER TABLE Report CHANGE `date` createdAt DATE;
