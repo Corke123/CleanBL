@@ -1,9 +1,7 @@
 package org.unibl.etf.ps.cleanbl.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 
@@ -12,6 +10,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @Entity
+@SuperBuilder
 public class EndUser extends User {
 
     @Id
@@ -26,4 +25,5 @@ public class EndUser extends User {
             name = "statusId"
     )
     private UserStatus userStatus;
+
 }
