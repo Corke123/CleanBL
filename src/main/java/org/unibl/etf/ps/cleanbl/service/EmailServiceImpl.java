@@ -1,11 +1,13 @@
 package org.unibl.etf.ps.cleanbl.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class EmailServiceImpl implements EmailService {
     private static final String NOREPLY_ADDRESS = "clean.bl.service@gmail.com";
@@ -28,7 +30,7 @@ public class EmailServiceImpl implements EmailService {
 
             emailSender.send(message);
         } catch (MailException exception) {
-            exception.printStackTrace();
+            log.warn("Unable to send an email to: " + to);
         }
     }
 }
