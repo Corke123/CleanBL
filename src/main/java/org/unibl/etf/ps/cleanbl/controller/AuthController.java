@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.unibl.etf.ps.cleanbl.dto.AuthenticationResponse;
+import org.unibl.etf.ps.cleanbl.dto.LoginRequest;
 import org.unibl.etf.ps.cleanbl.dto.RegisterRequest;
 import org.unibl.etf.ps.cleanbl.service.AuthService;
 
@@ -32,6 +34,11 @@ public class AuthController {
     public ResponseEntity<String> verifyAccount(@PathVariable String token) {
         authService.verifyAccount(token);
         return new ResponseEntity<>("Account Activated Successfully", HttpStatus.OK);
+    }
+
+    @PostMapping("/login")
+    public AuthenticationResponse login(@RequestBody LoginRequest loginRequest) {
+        return authService.login(loginRequest);
     }
 
 }

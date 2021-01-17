@@ -2,21 +2,31 @@ package org.unibl.etf.ps.cleanbl.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.unibl.etf.ps.cleanbl.dto.AuthenticationResponse;
+import org.unibl.etf.ps.cleanbl.dto.LoginRequest;
 import org.unibl.etf.ps.cleanbl.dto.RegisterRequest;
 import org.unibl.etf.ps.cleanbl.exception.EmailTakenException;
 import org.unibl.etf.ps.cleanbl.exception.UnknownUserStatusException;
 import org.unibl.etf.ps.cleanbl.exception.UsernameTakenException;
 import org.unibl.etf.ps.cleanbl.exception.VerificationTokenException;
+import org.unibl.etf.ps.cleanbl.exception.RoleNotFoundException;
 import org.unibl.etf.ps.cleanbl.model.EndUser;
 import org.unibl.etf.ps.cleanbl.model.UserStatus;
 import org.unibl.etf.ps.cleanbl.model.VerificationToken;
 import org.unibl.etf.ps.cleanbl.repository.EndUserRepository;
+import org.unibl.etf.ps.cleanbl.repository.RoleRepository;
 import org.unibl.etf.ps.cleanbl.repository.UserStatusRepository;
 import org.unibl.etf.ps.cleanbl.repository.VerificationTokenRepository;
+import org.unibl.etf.ps.cleanbl.security.JwtProvider;
 
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,6 +39,9 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
     private final EmailService emailService;
+    private final RoleRepository roleRepository;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
 
     private static final String SUBJECT_MESSAGE = "Please activate your account";
     private static final String VERIFICATION_LINK = "http://localhost:8080/api/auth/accountVerification/";
@@ -39,12 +52,18 @@ public class AuthService {
                        EndUserRepository endUserRepository,
                        PasswordEncoder passwordEncoder,
                        VerificationTokenRepository verificationTokenRepository,
-                       EmailService emailService) {
+                       EmailService emailService,
+                       RoleRepository roleRepository,
+                       AuthenticationManager authenticationManager,
+                       JwtProvider jwtProvider) {
         this.userStatusRepository = userStatusRepository;
         this.endUserRepository = endUserRepository;
         this.passwordEncoder = passwordEncoder;
         this.verificationTokenRepository = verificationTokenRepository;
         this.emailService = emailService;
+        this.roleRepository = roleRepository;
+        this.authenticationManager = authenticationManager;
+        this.jwtProvider = jwtProvider;
     }
 
     @Transactional
@@ -65,6 +84,7 @@ public class AuthService {
         endUser.setUsername(registerRequest.getUsername());
         endUser.setEmail(registerRequest.getEmail());
         endUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        endUser.setRoles(Collections.singletonList(roleRepository.findByName("User").orElseThrow(() -> new RoleNotFoundException("Unable to find role User"))));
         endUser.setNumberOfNegativePoints(0);
         endUser.setNumberOfPositivePoints(0);
         Optional<UserStatus> userStatusOptional = userStatusRepository.findByName("inactive");
@@ -102,5 +122,12 @@ public class AuthService {
         UserStatus activateStatus = userStatusRepository.findByName("active").orElseThrow(() -> new UnknownUserStatusException("Unknown user status"));
         user.setUserStatus(activateStatus);
         endUserRepository.save(user);
+    }
+
+    public AuthenticationResponse login(LoginRequest loginRequest) {
+        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        String token = jwtProvider.generateToken(authenticate);
+        return new AuthenticationResponse(token, loginRequest.getUsername());
     }
 }
