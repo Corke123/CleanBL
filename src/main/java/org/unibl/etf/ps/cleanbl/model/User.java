@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -41,6 +42,18 @@ public class User {
     private String password;
 
     private Instant created;
+
+    @ManyToMany
+    @JoinTable(
+            name = "UserHasRoles",
+            joinColumns = @JoinColumn(
+                    name = "userId", referencedColumnName = "id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "roleId", referencedColumnName = "id"
+            )
+    )
+    private List<Role> roles;
 
     @PrePersist
     public void createdAt() {
