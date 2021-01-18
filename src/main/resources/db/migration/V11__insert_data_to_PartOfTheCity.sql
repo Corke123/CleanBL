@@ -1,0 +1,17 @@
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Ada" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Borik" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Bulevar" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Vrbanja" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Kočićev vijenac" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Lazarevo" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Lauš" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Nova varoš" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Obilićevo" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Paprikovac" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Petrićevac" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Pobrđe" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Rosulje" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Srpske toplice" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Starčevica" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Centar" );
+INSERT INTO PartOfTheCity ( Name ) VALUES ( "Česma" );

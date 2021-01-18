@@ -1,0 +1,1 @@
+ALTER TABLE Report CHANGE image imagePath varchar(512);
