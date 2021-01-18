@@ -13,10 +13,9 @@ import org.unibl.etf.ps.cleanbl.dto.AuthenticationResponse;
 import org.unibl.etf.ps.cleanbl.dto.LoginRequest;
 import org.unibl.etf.ps.cleanbl.dto.RegisterRequest;
 import org.unibl.etf.ps.cleanbl.exception.EmailTakenException;
-import org.unibl.etf.ps.cleanbl.exception.UnknownUserStatusException;
+import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.exception.UsernameTakenException;
 import org.unibl.etf.ps.cleanbl.exception.VerificationTokenException;
-import org.unibl.etf.ps.cleanbl.exception.RoleNotFoundException;
 import org.unibl.etf.ps.cleanbl.model.EndUser;
 import org.unibl.etf.ps.cleanbl.model.UserStatus;
 import org.unibl.etf.ps.cleanbl.model.VerificationToken;
@@ -84,7 +83,7 @@ public class AuthService {
         endUser.setUsername(registerRequest.getUsername());
         endUser.setEmail(registerRequest.getEmail());
         endUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        endUser.setRoles(Collections.singletonList(roleRepository.findByName("User").orElseThrow(() -> new RoleNotFoundException("Unable to find role User"))));
+        endUser.setRoles(Collections.singletonList(roleRepository.findByName("User").orElseThrow(() -> new RecordNotFoundException("Unable to find role User"))));
         endUser.setNumberOfNegativePoints(0);
         endUser.setNumberOfPositivePoints(0);
         Optional<UserStatus> userStatusOptional = userStatusRepository.findByName("inactive");
@@ -119,7 +118,7 @@ public class AuthService {
     private void fetchUserAndEnable(VerificationToken verificationToken) {
         String username = verificationToken.getUser().getUsername();
         EndUser user = endUserRepository.findByUsername(username).orElseThrow(() -> new VerificationTokenException("User not found with username: " + username));
-        UserStatus activateStatus = userStatusRepository.findByName("active").orElseThrow(() -> new UnknownUserStatusException("Unknown user status"));
+        UserStatus activateStatus = userStatusRepository.findByName("active").orElseThrow(() -> new RecordNotFoundException("Unknown user status"));
         user.setUserStatus(activateStatus);
         endUserRepository.save(user);
     }

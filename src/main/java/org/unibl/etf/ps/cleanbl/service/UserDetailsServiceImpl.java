@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.unibl.etf.ps.cleanbl.model.Permission;
 import org.unibl.etf.ps.cleanbl.model.Role;
 import org.unibl.etf.ps.cleanbl.model.User;
@@ -21,6 +22,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userOptional = userRepository.findByUsername(username);
         User user = userOptional.orElseThrow(() -> new UsernameNotFoundException("There is no user with username: " + username));
