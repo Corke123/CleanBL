@@ -27,11 +27,8 @@ public class Report {
     @NotBlank(message = "Description is required")
     private String description;
 
-    @Column(
-            name = "image",
-            length = 1024
-    )
-    private byte[] imageBytes;
+    @NotBlank(message = "Image path is required")
+    private String imagePath;
 
     private Date createdAt;
 
@@ -49,12 +46,21 @@ public class Report {
 
     @ManyToOne
     @JoinColumn(
-            name = "departmentOfficerId"
+            name = "departmentId"
     )
-    private DepartmentOfficer departmentOfficer;
+    private Department department;
 
     @PrePersist
     public void placedAt() {
         createdAt = new Date();
+    }
+
+    public Report(EndUser endUser, String description, String imagePath, ReportStatus reportStatus, Street street, Department department) {
+        this.endUser = endUser;
+        this.description = description;
+        this.imagePath = imagePath;
+        this.reportStatus = reportStatus;
+        this.street = street;
+        this.department = department;
     }
 }
