@@ -3,12 +3,15 @@ package org.unibl.etf.ps.cleanbl.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unibl.etf.ps.cleanbl.dto.ReportRequest;
 import org.unibl.etf.ps.cleanbl.dto.ReportResponse;
 import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
+import org.unibl.etf.ps.cleanbl.exception.ReportNotFoundException;
 import org.unibl.etf.ps.cleanbl.model.*;
 import org.unibl.etf.ps.cleanbl.repository.*;
 
@@ -80,7 +83,7 @@ public class ReportService {
 
         Report saved = reportRepository.save(report);
 
-        return new ReportResponse(saved.getId().toString(),
+        return new ReportResponse(saved.getId(),
                 saved.getEndUser().getUsername(),
                 saved.getDescription(),
                 saved.getCreatedAt(),
@@ -93,7 +96,7 @@ public class ReportService {
     public List<ReportResponse> getAllReports() {
         return reportRepository.findAll().stream()
                 .map(r -> new ReportResponse(
-                        r.getId().toString(),
+                        r.getId(),
                         r.getEndUser().getUsername(),
                         r.getDescription(),
                         r.getCreatedAt(),
@@ -101,5 +104,67 @@ public class ReportService {
                         r.getStreet().getName() + " - " + r.getStreet().getPartOfTheCity().getName(),
                         r.getDepartment().getName()))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public ReportResponse getReport(Long id) throws ReportNotFoundException {
+        Report report = reportRepository.findById(id).orElseThrow(() -> new ReportNotFoundException("There is no report with id: " + id));
+        return new ReportResponse(report.getId(), report.getEndUser().getUsername(), report.getDescription(),
+                report.getCreatedAt(), report.getReportStatus().getName(),
+                report.getStreet().getName() + " - " + report.getStreet().getPartOfTheCity().getName(),
+                report.getDepartment().getName());
+    }
+
+    @Transactional
+    public boolean deleteReport(Long id) throws ReportNotFoundException {
+        String username = ((org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        boolean isDepartmentOfficer = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAuthorities()
+                .stream().map(GrantedAuthority::getAuthority)
+                .anyMatch(s -> s.equals("ROLE_DepartmentOfficer"));
+        Report report = reportRepository.findById(id).orElseThrow(() -> new ReportNotFoundException("There is no report with id: " + id));
+        if (isDepartmentOfficer || report.getEndUser().getUsername().equals(username)) {
+            reportRepository.delete(report);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Transactional
+    public boolean updateReport(Long id, ReportRequest reportRequest) throws ReportNotFoundException {
+        String username = ((org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        boolean isDepartmentOfficer = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getAuthorities()
+                .stream().map(GrantedAuthority::getAuthority)
+                .anyMatch(s -> s.equals("ROLE_DepartmentOfficer"));
+        Report report = reportRepository.findById(id).orElseThrow(() -> new ReportNotFoundException("There is no report with id: " + id));
+        if (isDepartmentOfficer || report.getEndUser().getUsername().equals(username)) {
+            Department department = departmentRepository.findByName(reportRequest.getDepartmentName())
+                    .orElseThrow(() -> new RecordNotFoundException("Unable to find department with name: "
+                    + reportRequest.getDepartmentName()));
+            PartOfTheCity partOfTheCity = partOfTheCityRepository.findByName(reportRequest.getPartOfTheCity())
+                    .orElseThrow(() -> new RecordNotFoundException("Unable to find part of the city with name: " + reportRequest.getPartOfTheCity()));
+            Street street = streetRepository.findByNameAndPartOfTheCity(reportRequest.getStreet(), partOfTheCity)
+                    .orElseThrow(() -> new RecordNotFoundException("Unable to find street with name " + reportRequest.getStreet() + " in the " + partOfTheCity.getName()));
+
+            String imageName = UUID.randomUUID().toString() + IMAGE_EXTENSION;
+            Path path = Paths.get(uploadDir + imageName);
+            try {
+                Files.write(path, Base64.getDecoder().decode(reportRequest.getBase64Image()));
+                log.debug("Image saved to: " + uploadDir + imageName);
+            } catch (IOException e) {
+                log.info("Unable to save image on path: " + uploadDir + imageName);
+            }
+
+            report.setDepartment(department);
+            report.setDescription(reportRequest.getDescription());
+            report.setStreet(street);
+            report.setImagePath(imageName);
+
+            reportRepository.save(report);
+            return true;
+        }
+        return false;
     }
 }

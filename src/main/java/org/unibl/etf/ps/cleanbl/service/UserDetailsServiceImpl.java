@@ -30,7 +30,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> userOptional = userRepository.findByUsername(username);
         User user = userOptional.orElseThrow(() -> new UsernameNotFoundException("There is no user with username: " + username));
-
         UserStatus userStatus = userStatusRepository.findByName("active").orElseThrow(() -> new RecordNotFoundException("There is no user status with name: active"));
 
         boolean enabled = user.getUserStatus().equals(userStatus);

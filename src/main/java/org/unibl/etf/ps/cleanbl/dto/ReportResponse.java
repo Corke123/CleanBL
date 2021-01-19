@@ -10,7 +10,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReportResponse {
-    private String id;
+    private Long id;
     private String userReported;
     private String description;
     private Date createdAt;
