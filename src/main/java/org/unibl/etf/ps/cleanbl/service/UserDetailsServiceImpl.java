@@ -8,10 +8,13 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.model.Permission;
 import org.unibl.etf.ps.cleanbl.model.Role;
 import org.unibl.etf.ps.cleanbl.model.User;
+import org.unibl.etf.ps.cleanbl.model.UserStatus;
 import org.unibl.etf.ps.cleanbl.repository.UserRepository;
+import org.unibl.etf.ps.cleanbl.repository.UserStatusRepository;
 
 import java.util.*;
 
@@ -20,6 +23,7 @@ import java.util.*;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final UserStatusRepository userStatusRepository;
 
     @Override
     @Transactional
@@ -27,8 +31,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Optional<User> userOptional = userRepository.findByUsername(username);
         User user = userOptional.orElseThrow(() -> new UsernameNotFoundException("There is no user with username: " + username));
 
+        UserStatus userStatus = userStatusRepository.findByName("active").orElseThrow(() -> new RecordNotFoundException("There is no user status with name: active"));
+
+        boolean enabled = user.getUserStatus().equals(userStatus);
+
         return new org.springframework.security.core.userdetails.User(
-                user.getUsername(), user.getPassword(), true,
+                user.getUsername(), user.getPassword(), enabled,
                 true, true, true,
                 getAuthorities(user));
     }

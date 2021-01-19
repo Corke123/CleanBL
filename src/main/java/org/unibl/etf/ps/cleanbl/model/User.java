@@ -55,6 +55,12 @@ public class User {
     )
     private List<Role> roles;
 
+    @ManyToOne
+    @JoinColumn(
+            name = "statusId"
+    )
+    private UserStatus userStatus;
+
     @PrePersist
     public void createdAt() {
         created = Instant.now();

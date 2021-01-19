@@ -19,11 +19,4 @@ public class EndUser extends User {
 
     private int numberOfPositivePoints;
     private int numberOfNegativePoints;
-
-    @ManyToOne
-    @JoinColumn(
-            name = "statusId"
-    )
-    private UserStatus userStatus;
-
 }

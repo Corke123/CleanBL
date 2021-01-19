@@ -38,7 +38,9 @@ public class ReportService {
     private final UserRepository userRepository;
 
     @Autowired
-    public ReportService(ReportRepository reportRepository, ReportStatusRepository reportStatusRepository, DepartmentRepository departmentRepository, PartOfTheCityRepository partOfTheCityRepository, StreetRepository streetRepository, UserRepository userRepository) {
+    public ReportService(ReportRepository reportRepository, ReportStatusRepository reportStatusRepository,
+                         DepartmentRepository departmentRepository, PartOfTheCityRepository partOfTheCityRepository,
+                         StreetRepository streetRepository, UserRepository userRepository) {
         this.reportRepository = reportRepository;
         this.reportStatusRepository = reportStatusRepository;
         this.departmentRepository = departmentRepository;
@@ -50,12 +52,18 @@ public class ReportService {
 
     @Transactional
     public ReportResponse saveReport(ReportRequest reportRequest) {
-        String username = ((org.springframework.security.core.userdetails.User)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-        EndUser user = (EndUser) userRepository.findByUsername(username).orElseThrow(() -> new RecordNotFoundException("There is no user with username: " + username));
-        Department department = departmentRepository.findByName(reportRequest.getDepartmentName()).orElseThrow(() -> new RecordNotFoundException("Unable to find department with name: " + reportRequest.getDepartmentName()));
-        PartOfTheCity partOfTheCity = partOfTheCityRepository.findByName(reportRequest.getPartOfTheCity()).orElseThrow(() -> new RecordNotFoundException("Unable to find part of the city with name: " + reportRequest.getPartOfTheCity()));
-        Street street = streetRepository.findByNameAndPartOfTheCity(reportRequest.getStreet(), partOfTheCity).orElseThrow(() -> new RecordNotFoundException("Unable to find street with name: " + reportRequest.getStreet()));
-        ReportStatus reportStatus = reportStatusRepository.findByName("received").orElseThrow(() -> new RecordNotFoundException("Unable to find report status with name received"));
+        String username = ((org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        EndUser user = (EndUser) userRepository.findByUsername(username)
+                .orElseThrow(() -> new RecordNotFoundException("There is no user with username: " + username));
+        Department department = departmentRepository.findByName(reportRequest.getDepartmentName())
+                .orElseThrow(() -> new RecordNotFoundException("Unable to find department with name: " + reportRequest.getDepartmentName()));
+        PartOfTheCity partOfTheCity = partOfTheCityRepository.findByName(reportRequest.getPartOfTheCity())
+                .orElseThrow(() -> new RecordNotFoundException("Unable to find part of the city with name: " + reportRequest.getPartOfTheCity()));
+        Street street = streetRepository.findByNameAndPartOfTheCity(reportRequest.getStreet(), partOfTheCity)
+                .orElseThrow(() -> new RecordNotFoundException("Unable to find street with name: " + reportRequest.getStreet()));
+        ReportStatus reportStatus = reportStatusRepository.findByName("received")
+                .orElseThrow(() -> new RecordNotFoundException("Unable to find report status with name received"));
 
         String imageName = UUID.randomUUID().toString() + IMAGE_EXTENSION;
 
