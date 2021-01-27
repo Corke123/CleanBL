@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.sql.Timestamp;
+import java.time.Instant;
 
 @Data
 @NoArgsConstructor
@@ -24,7 +24,7 @@ public class Comment {
     )
     private Report report;
 
-    private Timestamp dateOfPublication;
+    private Instant dateOfPublication;
 
     @NotBlank(message = "Content is required")
     private String content;
@@ -34,4 +34,15 @@ public class Comment {
             name = "userId"
     )
     private EndUser endUser;
+
+    @PrePersist
+    private void setDateOfPublication() {
+        this.dateOfPublication = Instant.now();
+    }
+
+    public Comment(Report report, String content, EndUser endUser) {
+        this.report = report;
+        this.content = content;
+        this.endUser = endUser;
+    }
 }

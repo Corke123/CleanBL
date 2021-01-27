@@ -17,4 +17,5 @@ public class ReportResponse {
     private String status;
     private String location;
     private String department;
+    private String base64Image;
 }

@@ -8,6 +8,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.unibl.etf.ps.cleanbl.dto.CommentDTO;
+import org.unibl.etf.ps.cleanbl.dto.CommentRequest;
 import org.unibl.etf.ps.cleanbl.dto.ReportRequest;
 import org.unibl.etf.ps.cleanbl.dto.ReportResponse;
 import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZoneOffset;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
@@ -39,17 +42,20 @@ public class ReportService {
     private final PartOfTheCityRepository partOfTheCityRepository;
     private final StreetRepository streetRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
     @Autowired
     public ReportService(ReportRepository reportRepository, ReportStatusRepository reportStatusRepository,
                          DepartmentRepository departmentRepository, PartOfTheCityRepository partOfTheCityRepository,
-                         StreetRepository streetRepository, UserRepository userRepository) {
+                         StreetRepository streetRepository, UserRepository userRepository,
+                         CommentRepository commentRepository) {
         this.reportRepository = reportRepository;
         this.reportStatusRepository = reportStatusRepository;
         this.departmentRepository = departmentRepository;
         this.partOfTheCityRepository = partOfTheCityRepository;
         this.streetRepository = streetRepository;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
     }
 
 
@@ -89,30 +95,36 @@ public class ReportService {
                 saved.getCreatedAt(),
                 saved.getReportStatus().getName(),
                 saved.getStreet().getName() + " - " + saved.getStreet().getPartOfTheCity().getName(),
-                saved.getDepartment().getName());
+                saved.getDepartment().getName(),
+                reportRequest.getBase64Image());
     }
 
     @Transactional(readOnly = true)
     public List<ReportResponse> getAllReports() {
         return reportRepository.findAll().stream()
-                .map(r -> new ReportResponse(
+                .map(r ->
+                    new ReportResponse(
                         r.getId(),
                         r.getEndUser().getUsername(),
                         r.getDescription(),
                         r.getCreatedAt(),
                         r.getReportStatus().getName(),
                         r.getStreet().getName() + " - " + r.getStreet().getPartOfTheCity().getName(),
-                        r.getDepartment().getName()))
+                        r.getDepartment().getName(),
+                        r.encodeImage(uploadDir))
+                    )
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
     public ReportResponse getReport(Long id) throws ReportNotFoundException {
         Report report = reportRepository.findById(id).orElseThrow(() -> new ReportNotFoundException("There is no report with id: " + id));
+
         return new ReportResponse(report.getId(), report.getEndUser().getUsername(), report.getDescription(),
                 report.getCreatedAt(), report.getReportStatus().getName(),
                 report.getStreet().getName() + " - " + report.getStreet().getPartOfTheCity().getName(),
-                report.getDepartment().getName());
+                report.getDepartment().getName(),
+                report.encodeImage(uploadDir));
     }
 
     @Transactional
@@ -166,5 +178,24 @@ public class ReportService {
             return true;
         }
         return false;
+    }
+
+    @Transactional(readOnly = true)
+    public List<CommentDTO> getCommentsForReport(Long reportId) throws ReportNotFoundException {
+        Report report = reportRepository.findById(reportId).orElseThrow(() -> new ReportNotFoundException("There is no report with id: " + reportId));
+        return commentRepository.findByReport(report).stream()
+                .map(c -> new CommentDTO(c.getReport().getId(), c.getDateOfPublication(), c.getContent(), c.getEndUser().getUsername()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public CommentDTO addComment(Long reportId, CommentRequest commentRequest) throws ReportNotFoundException {
+        Report report = reportRepository.findById(reportId).orElseThrow(() -> new ReportNotFoundException("There is no report with id: " + reportId));
+        String username = ((org.springframework.security.core.userdetails.User)
+                SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+        EndUser endUser = (EndUser) userRepository.findByUsername(username).orElseThrow(() -> new RecordNotFoundException("There is no user with username: " + username));
+        Comment comment = new Comment(report, commentRequest.getContent(), endUser);
+        commentRepository.save(comment);
+        return new CommentDTO(report.getId(), comment.getDateOfPublication(), comment.getContent(), comment.getEndUser().getUsername());
     }
 }
