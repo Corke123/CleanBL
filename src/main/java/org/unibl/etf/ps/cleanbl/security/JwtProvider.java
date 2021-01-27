@@ -20,6 +20,8 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.time.Instant;
+import java.util.Date;
 
 @Service
 @Slf4j
@@ -35,6 +37,8 @@ public class JwtProvider {
     private String keyAlias;
 
     private KeyStore keyStore;
+    @Value("${jwt.expiration.time}")
+    private Long jwtExpirationInMillis;
 
     @PostConstruct
     public void init() {
@@ -55,6 +59,24 @@ public class JwtProvider {
             Algorithm algorithm = Algorithm.RSA256(publicKey, privateKey);
             return JWT.create()
                     .withSubject(principal.getUsername())
+                    .withIssuedAt(Date.from(Instant.now()))
+                    .withExpiresAt(Date.from(Instant.now().plusMillis(jwtExpirationInMillis)))
+                    .sign(algorithm);
+        } catch (JWTCreationException exception){
+            log.info("Invalid Signing configuration / Couldn't convert Claims.");
+        }
+        return null;
+    }
+
+    public String generateTokenWithUsername(String username) {
+        RSAPublicKey publicKey = (RSAPublicKey) getPublicKey();
+        RSAPrivateKey privateKey = (RSAPrivateKey) getPrivateKey();
+        try {
+            Algorithm algorithm = Algorithm.RSA256(publicKey, privateKey);
+            return JWT.create()
+                    .withSubject(username)
+                    .withIssuedAt(Date.from(Instant.now()))
+                    .withExpiresAt(Date.from(Instant.now().plusMillis(jwtExpirationInMillis)))
                     .sign(algorithm);
         } catch (JWTCreationException exception){
             log.info("Invalid Signing configuration / Couldn't convert Claims.");
@@ -108,5 +130,9 @@ public class JwtProvider {
             log.info("Invalid signature/claims");
             throw exception;
         }
+    }
+
+    public Long getJwtExpirationInMillis() {
+        return jwtExpirationInMillis;
     }
 }

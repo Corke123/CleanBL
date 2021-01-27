@@ -1,5 +1,6 @@
 package org.unibl.etf.ps.cleanbl.service;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unibl.etf.ps.cleanbl.dto.AuthenticationResponse;
 import org.unibl.etf.ps.cleanbl.dto.LoginRequest;
+import org.unibl.etf.ps.cleanbl.dto.RefreshTokenRequest;
 import org.unibl.etf.ps.cleanbl.dto.RegisterRequest;
 import org.unibl.etf.ps.cleanbl.exception.EmailTakenException;
 import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
@@ -25,12 +27,14 @@ import org.unibl.etf.ps.cleanbl.repository.UserStatusRepository;
 import org.unibl.etf.ps.cleanbl.repository.VerificationTokenRepository;
 import org.unibl.etf.ps.cleanbl.security.JwtProvider;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class AuthService {
 
     private final UserStatusRepository userStatusRepository;
@@ -41,29 +45,11 @@ public class AuthService {
     private final RoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
 
     private static final String SUBJECT_MESSAGE = "Please activate your account";
     private static final String VERIFICATION_LINK = "http://localhost:8080/api/auth/accountVerification/";
     private static final String GENERIC_MESSAGE = "Thank you for signing up to CleanBL, please click on below link to activate your account: " + VERIFICATION_LINK;
-
-    @Autowired
-    public AuthService(UserStatusRepository userStatusRepository,
-                       EndUserRepository endUserRepository,
-                       PasswordEncoder passwordEncoder,
-                       VerificationTokenRepository verificationTokenRepository,
-                       EmailService emailService,
-                       RoleRepository roleRepository,
-                       AuthenticationManager authenticationManager,
-                       JwtProvider jwtProvider) {
-        this.userStatusRepository = userStatusRepository;
-        this.endUserRepository = endUserRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.verificationTokenRepository = verificationTokenRepository;
-        this.emailService = emailService;
-        this.roleRepository = roleRepository;
-        this.authenticationManager = authenticationManager;
-        this.jwtProvider = jwtProvider;
-    }
 
     @Transactional
     public void signup(RegisterRequest registerRequest) {
@@ -127,6 +113,19 @@ public class AuthService {
         Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         String token = jwtProvider.generateToken(authenticate);
-        return new AuthenticationResponse(token, loginRequest.getUsername());
+        return new AuthenticationResponse(
+                token,
+                refreshTokenService.generateRefreshToken().getToken(),
+                Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()),
+                loginRequest.getUsername());
+    }
+
+    public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+        refreshTokenService.validateRefreshToken((refreshTokenRequest.getRefreshToken()));
+        String token = jwtProvider.generateTokenWithUsername(refreshTokenRequest.getUsername());
+        return new AuthenticationResponse(
+                token, refreshTokenRequest.getRefreshToken(),
+                Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()),
+                refreshTokenRequest.getUsername());
     }
 }
