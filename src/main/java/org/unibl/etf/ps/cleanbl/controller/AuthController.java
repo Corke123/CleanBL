@@ -23,7 +23,6 @@ public class AuthController {
     private final AuthService authService;
     private final RefreshTokenService refreshTokenService;
 
-    @CrossOrigin
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Valid @RequestBody RegisterRequest registerRequest) {
         authService.signup(registerRequest);
@@ -36,7 +35,6 @@ public class AuthController {
         return new ResponseEntity<>("Account Activated Successfully", HttpStatus.OK);
     }
 
-    @CrossOrigin
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody LoginRequest loginRequest) {
         return new ResponseEntity<>(authService.login(loginRequest), HttpStatus.OK);

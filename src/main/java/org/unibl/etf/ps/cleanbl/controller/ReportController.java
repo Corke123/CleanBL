@@ -21,7 +21,6 @@ public class ReportController {
 
     private final ReportService reportService;
 
-    @CrossOrigin
     @GetMapping
     public ResponseEntity<List<ReportResponse>> getAllReports() {
         return ResponseEntity.status(HttpStatus.OK)
@@ -34,7 +33,6 @@ public class ReportController {
                 .body(reportService.saveReport(reportRequest));
     }
 
-    @CrossOrigin
     @GetMapping("/{id}")
     public ResponseEntity<ReportResponse> getReport(@PathVariable Long id) {
         try {
@@ -72,7 +70,6 @@ public class ReportController {
         }
     }
 
-    @CrossOrigin
     @GetMapping("/{reportId}/comments/")
     public ResponseEntity<List<CommentDTO>> getComments(@PathVariable("reportId") Long reportId) {
         try {

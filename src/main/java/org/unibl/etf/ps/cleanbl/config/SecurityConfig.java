@@ -29,10 +29,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.csrf().disable()
+        httpSecurity.cors()
+                .and()
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/auth/**")
                     .permitAll()
+                .antMatchers("/v2/api-docs",
+                        "/swagger-resources/**",
+                        "/swagger-ui/**",
+                        "/webjars/**",
+                        "favicon.ico")
+                .permitAll()
                 .antMatchers(HttpMethod.GET, "/api/reports/**")
                     .permitAll()
                 .antMatchers(HttpMethod.POST, "/api/reports/")
