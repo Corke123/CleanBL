@@ -147,7 +147,7 @@ Alternatively you can use the [Spring Boot Maven plugin](https://docs.spring.io/
 
 ```shell
 $ git clone https://github.com/Corke123/CleanBL.git
-$ cd Spring-Boot-Application-Template
+$ cd CleanBL
 $ mvn spring-boot:run
 ```
 
