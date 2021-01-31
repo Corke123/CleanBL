@@ -120,7 +120,7 @@ file.upload-dir=add_your_desired_path_here
 
 ### EER Diagram
 
-[![EER Diagram](images/CleanBL-EER-diagram.png)](images/CleanBL-EER-diagram.png)
+[![EER Diagram](images/CleanBL-EER-Diagram.png)](images/CleanBL-EER-diagram.png)
 
 ## Installing
 
