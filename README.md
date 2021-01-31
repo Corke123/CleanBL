@@ -146,7 +146,7 @@ There are several ways to run a Spring Boot application on your local machine. O
 Alternatively you can use the [Spring Boot Maven plugin](https://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-maven-plugin.html) like so:
 
 ```shell
-$ git clone https://github.com/Spring-Boot-Framework/Spring-Boot-Application-Template.git
+$ git clone https://github.com/Corke123/CleanBL.git
 $ cd Spring-Boot-Application-Template
 $ mvn spring-boot:run
 ```
