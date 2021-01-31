@@ -17,7 +17,6 @@ import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTest
                 "spring.jpa.properties.javax.persistence.validation.mode=none",
         }
 )
-@AutoConfigureTestDatabase(replace = NONE)
 public class UserStatusRepositoryTest {
 
     @Autowired
