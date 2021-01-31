@@ -1,5 +1,6 @@
 package org.unibl.etf.ps.cleanbl.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,5 +25,6 @@ public class Street {
     @JoinColumn(
             name = "partOfTheCityId"
     )
+    @JsonIgnore
     private PartOfTheCity partOfTheCity;
 }

@@ -16,7 +16,7 @@ import javax.validation.Valid;
 
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping(path = "/api/auth")
 @AllArgsConstructor
 public class AuthController {
 
@@ -26,7 +26,7 @@ public class AuthController {
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@Valid @RequestBody RegisterRequest registerRequest) {
         authService.signup(registerRequest);
-        return new ResponseEntity<>("User Registration Successful", HttpStatus.OK);
+        return new ResponseEntity<>("User Registration Successful", HttpStatus.CREATED);
     }
 
     @GetMapping("accountVerification/{token}")

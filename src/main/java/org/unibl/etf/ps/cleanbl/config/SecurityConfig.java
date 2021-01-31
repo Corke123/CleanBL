@@ -25,8 +25,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-
-
     @Override
     public void configure(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.cors()
@@ -49,6 +47,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .hasAnyAuthority("Report_Delete", "Role_DepartmentOfficer")
                 .antMatchers(HttpMethod.PUT, "/api/reports/")
                     .hasAnyAuthority("Report_Update", "Role_DepartmentOfficer")
+                .antMatchers(HttpMethod.GET, "/api/departments")
+                    .permitAll()
                 .anyRequest()
                 .authenticated();
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

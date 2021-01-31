@@ -15,22 +15,20 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/reports/")
+@RequestMapping(path = "/api/reports")
 @AllArgsConstructor
 public class ReportController {
 
     private final ReportService reportService;
 
     @GetMapping
-    public ResponseEntity<List<ReportResponse>> getAllReports() {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(reportService.getAllReports());
+    public List<ReportResponse> getAllReports() {
+        return reportService.getAllReports();
     }
 
     @PostMapping
-    public ResponseEntity<ReportResponse> uploadReport(@Valid @RequestBody ReportRequest reportRequest) {
-        return  ResponseEntity.status(HttpStatus.CREATED)
-                .body(reportService.saveReport(reportRequest));
+    public ReportResponse uploadReport(@Valid @RequestBody ReportRequest reportRequest) {
+        return  reportService.saveReport(reportRequest);
     }
 
     @GetMapping("/{id}")
@@ -44,7 +42,7 @@ public class ReportController {
         }
     }
 
-    @DeleteMapping(path = "{id}")
+    @DeleteMapping(path = "/{id}")
     public ResponseEntity<Object> deleteReport(@PathVariable("id") Long id) {
         try {
             if (reportService.deleteReport(id)) {
@@ -57,7 +55,7 @@ public class ReportController {
         }
     }
 
-    @PutMapping(path = "{id}")
+    @PutMapping(path = "/{id}")
     public ResponseEntity<Object> updateReport(@PathVariable("id") Long id, @Valid @RequestBody ReportRequest reportRequest) {
         try {
             if (reportService.updateReport(id, reportRequest)) {
@@ -71,22 +69,12 @@ public class ReportController {
     }
 
     @GetMapping("/{reportId}/comments/")
-    public ResponseEntity<List<CommentDTO>> getComments(@PathVariable("reportId") Long reportId) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(reportService.getCommentsForReport(reportId));
-        } catch (ReportNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+    public List<CommentDTO> getComments(@PathVariable("reportId") Long reportId) {
+        return reportService.getCommentsForReport(reportId);
     }
 
     @PostMapping("/{reportId}/comments/")
-    public ResponseEntity<CommentDTO> addComment(@PathVariable("reportId") Long reportId, @RequestBody @Valid CommentRequest commentRequest) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(reportService.addComment(reportId, commentRequest));
-        } catch (ReportNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+    public CommentDTO addComment(@PathVariable("reportId") Long reportId, @RequestBody @Valid CommentRequest commentRequest) {
+        return reportService.addComment(reportId, commentRequest);
     }
 }

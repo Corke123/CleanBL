@@ -1,6 +1,6 @@
 package org.unibl.etf.ps.cleanbl.exception;
 
-public class ReportNotFoundException extends Exception {
+public class ReportNotFoundException extends IllegalArgumentException {
     public ReportNotFoundException() {
         super();
     }

@@ -11,7 +11,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class EmailServiceImpl implements EmailService {
-    private static final String NOREPLY_ADDRESS = "clean.bl.service@gmail.com";
+    
+    private static final String NO_REPLY_ADDRESS = "clean.bl.service@gmail.com";
 
     private final JavaMailSender emailSender;
 
@@ -25,7 +26,7 @@ public class EmailServiceImpl implements EmailService {
     public void sendMessage(String to, String subject, String text) {
         try {
             SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(NOREPLY_ADDRESS);
+            message.setFrom(NO_REPLY_ADDRESS);
             message.setTo(to);
             message.setSubject(subject);
             message.setText(text);
