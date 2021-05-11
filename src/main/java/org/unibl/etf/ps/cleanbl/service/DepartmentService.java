@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class DepartmentService {
 
-    private DepartmentRepository departmentRepository;
+    private final DepartmentRepository departmentRepository;
 
     public List<Department> getDepartments() {
         return departmentRepository.findAll();

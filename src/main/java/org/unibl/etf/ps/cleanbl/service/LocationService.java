@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 public class LocationService {
 
-    private PartOfTheCityRepository partOfTheCityRepository;
+    private final PartOfTheCityRepository partOfTheCityRepository;
 
     public List<PartOfTheCity> getAllPartOfTheCity() {
         return partOfTheCityRepository.findAll();
