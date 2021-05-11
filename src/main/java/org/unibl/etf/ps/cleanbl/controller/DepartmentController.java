@@ -10,7 +10,7 @@ import org.unibl.etf.ps.cleanbl.service.DepartmentService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/departments")
+@RequestMapping("/api/v1/departments")
 @AllArgsConstructor
 public class DepartmentController {
 

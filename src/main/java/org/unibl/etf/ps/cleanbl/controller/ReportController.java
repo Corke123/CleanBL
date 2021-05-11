@@ -15,7 +15,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/api/reports")
+@RequestMapping(path = "/api/v1/reports")
 @AllArgsConstructor
 public class ReportController {
 
@@ -28,7 +28,7 @@ public class ReportController {
 
     @PostMapping
     public ReportResponse uploadReport(@Valid @RequestBody ReportRequest reportRequest) {
-        return  reportService.saveReport(reportRequest);
+        return reportService.saveReport(reportRequest);
     }
 
     @GetMapping("/{id}")

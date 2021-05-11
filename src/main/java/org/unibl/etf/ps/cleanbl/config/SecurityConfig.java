@@ -31,24 +31,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/auth/**")
-                    .permitAll()
+                .antMatchers("/api/v1/auth/**")
+                .permitAll()
                 .antMatchers("/v2/api-docs",
                         "/swagger-resources/**",
                         "/swagger-ui/**",
                         "/webjars/**",
                         "favicon.ico")
                 .permitAll()
-                .antMatchers(HttpMethod.GET, "/api/reports/**")
-                    .permitAll()
-                .antMatchers(HttpMethod.POST, "/api/reports/")
-                    .hasAuthority("Report_Create")
-                .antMatchers(HttpMethod.DELETE, "/api/reports/")
-                    .hasAnyAuthority("Report_Delete", "Role_DepartmentOfficer")
-                .antMatchers(HttpMethod.PUT, "/api/reports/")
-                    .hasAnyAuthority("Report_Update", "Role_DepartmentOfficer")
-                .antMatchers(HttpMethod.GET, "/api/departments")
-                    .permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1/reports/**")
+                .permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/reports/")
+                .hasAuthority("Report_Create")
+                .antMatchers(HttpMethod.DELETE, "/api/v1/reports/")
+                .hasAnyAuthority("Report_Delete", "Role_DepartmentOfficer")
+                .antMatchers(HttpMethod.PUT, "/api/v1/reports/")
+                .hasAnyAuthority("Report_Update", "Role_DepartmentOfficer")
+                .antMatchers(HttpMethod.GET, "/api/v1/departments")
+                .permitAll()
                 .anyRequest()
                 .authenticated();
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

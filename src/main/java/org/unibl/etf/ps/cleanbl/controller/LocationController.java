@@ -10,7 +10,7 @@ import org.unibl.etf.ps.cleanbl.service.LocationService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/locations")
+@RequestMapping("/api/v1/locations")
 @AllArgsConstructor
 public class LocationController {
 
