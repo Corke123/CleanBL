@@ -1,6 +1,7 @@
 package org.unibl.etf.ps.cleanbl.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Slf4j
 @Entity
 public class Report {
@@ -62,23 +64,18 @@ public class Report {
         createdAt = new Date();
     }
 
-    public Report(EndUser endUser, String description, String imagePath, ReportStatus reportStatus, Street street, Department department) {
-        this.endUser = endUser;
-        this.description = description;
-        this.imagePath = imagePath;
-        this.reportStatus = reportStatus;
-        this.street = street;
-        this.department = department;
-    }
-
     public String encodeImage(String uploadDir) {
         Path path = Paths.get(uploadDir + imagePath);
         String encodedString = "";
         try {
             encodedString = Base64.getEncoder().encodeToString(Files.readAllBytes(path));
         } catch (IOException e) {
-            log.info("Unable to read image from: " + path.toString());
+            log.info("Unable to read image from: " + path);
         }
         return encodedString;
+    }
+
+    public boolean canUserEditReport(org.springframework.security.core.userdetails.User user) {
+        return endUser.getUsername().equals(user.getUsername());
     }
 }
