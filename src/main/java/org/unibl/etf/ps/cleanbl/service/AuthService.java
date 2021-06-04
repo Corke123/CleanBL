@@ -92,9 +92,11 @@ public class AuthService {
                 .orElseThrow(() -> new RecordNotFoundException("Unknown user status"));
         user.setUserStatus(activeStatus);
         endUserRepository.save(user);
+        log.info("User with id " + user.getId() + " activated his account");
     }
 
     public AuthenticationResponse login(LoginRequest loginRequest) {
+        log.info("Attempt to login with username: " + loginRequest.getUsername());
         Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
