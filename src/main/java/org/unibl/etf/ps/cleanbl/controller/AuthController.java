@@ -28,7 +28,7 @@ public class AuthController {
     @GetMapping("accountVerification/{token}")
     public ResponseEntity<String> verifyAccount(@PathVariable String token) {
         authService.verifyAccount(token);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Vas nalog je uspjesno aktiviran!");
     }
 
     @PostMapping("/login")
