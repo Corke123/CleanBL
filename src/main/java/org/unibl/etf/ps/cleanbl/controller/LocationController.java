@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.unibl.etf.ps.cleanbl.model.PartOfTheCity;
-import org.unibl.etf.ps.cleanbl.service.LocationService;
+import org.unibl.etf.ps.cleanbl.service.PartOfTheCityService;
 
 import java.util.List;
 
@@ -15,10 +15,10 @@ import java.util.List;
 @AllArgsConstructor
 public class LocationController {
 
-    private final LocationService locationService;
+    private final PartOfTheCityService partOfTheCityService;
 
     @GetMapping
     public ResponseEntity<List<PartOfTheCity>> getLocations() {
-        return ResponseEntity.ok(locationService.getAllPartOfTheCity());
+        return ResponseEntity.ok(partOfTheCityService.getAllPartOfTheCity());
     }
 }
