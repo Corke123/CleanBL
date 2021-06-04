@@ -1,3 +1,3 @@
-INSERT INTO ReportStatus (Name) VALUES ("received");
-INSERT INTO ReportStatus (Name) VALUES ("processing");
-INSERT INTO ReportStatus (Name) VALUES ("finished");
+INSERT INTO ReportStatus (Name) VALUES ("poslan");
+INSERT INTO ReportStatus (Name) VALUES ("u procesu");
+INSERT INTO ReportStatus (Name) VALUES ("zavrsen");
