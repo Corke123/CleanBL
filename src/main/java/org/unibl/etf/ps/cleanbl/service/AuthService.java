@@ -27,6 +27,7 @@ import org.unibl.etf.ps.cleanbl.repository.VerificationTokenRepository;
 import org.unibl.etf.ps.cleanbl.security.JwtProvider;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.UUID;
 
 @Slf4j
@@ -35,8 +36,9 @@ import java.util.UUID;
 public class AuthService {
 
     private static final String SUBJECT_MESSAGE = "Please activate your account";
-    private static final String VERIFICATION_LINK = "http://localhost:8080/api/auth/accountVerification/";
-    private static final String GENERIC_MESSAGE = "Thank you for signing up to CleanBL, please click on below link to activate your account: " + VERIFICATION_LINK;
+    private static final String VERIFICATION_LINK = "http://localhost:8080/api/v1/auth/accountVerification/";
+    private static final String GENERIC_MESSAGE = "Thank you for signing up to CleanBL, please click on below link to activate your account: "
+            + VERIFICATION_LINK;
     private final UserStatusRepository userStatusRepository;
     private final EndUserRepository endUserRepository;
     private final PasswordEncoder passwordEncoder;
@@ -49,11 +51,15 @@ public class AuthService {
 
     @Transactional
     public void signup(RegisterRequest registerRequest) {
+        log.info("Creating new account for user: " + registerRequest.getFirstName() + " " + registerRequest.getLastName());
         checkIfUserExists(registerRequest);
 
         EndUser endUser = userMapper.toEntity(registerRequest);
         endUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        endUser.setUserStatus(userStatusRepository.findByName("inactive").orElseThrow(() -> new RecordNotFoundException("There is no status inactive")));
+        endUser.setUserStatus(userStatusRepository.findByName("inactive")
+                .orElseThrow(() -> new RecordNotFoundException("There is no status inactive")));
+        endUser.setRoles(Collections.singletonList(roleRepository.findByName("User")
+                .orElseThrow(() -> new RecordNotFoundException("There is no role user"))));
         endUserRepository.save(endUser);
 
         String token = generateVerificationToken(endUser);
