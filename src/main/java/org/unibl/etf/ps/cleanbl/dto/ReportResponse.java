@@ -15,7 +15,8 @@ public class ReportResponse {
     private String description;
     private Date createdAt;
     private String status;
-    private String location;
+    private String street;
+    private String partOfTheCity;
     private String department;
     private String base64Image;
 }
