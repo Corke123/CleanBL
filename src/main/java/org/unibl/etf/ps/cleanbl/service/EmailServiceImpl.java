@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class EmailServiceImpl implements EmailService {
-    
+
     private static final String NO_REPLY_ADDRESS = "clean.bl.service@gmail.com";
 
     private final JavaMailSender emailSender;
@@ -32,6 +32,7 @@ public class EmailServiceImpl implements EmailService {
             message.setText(text);
 
             emailSender.send(message);
+            log.info("Activation mail sent");
         } catch (MailException exception) {
             log.warn("Unable to send an email to: " + to);
         }
