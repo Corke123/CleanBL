@@ -1,17 +1,12 @@
 package org.unibl.etf.ps.cleanbl.controller.error;
 
-import ch.qos.logback.core.net.server.Client;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.unibl.etf.ps.cleanbl.exception.EmailTakenException;
-import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
-import org.unibl.etf.ps.cleanbl.exception.UsernameTakenException;
-import org.unibl.etf.ps.cleanbl.exception.VerificationTokenException;
+import org.unibl.etf.ps.cleanbl.exception.*;
 
 import java.util.ArrayList;
 
@@ -65,6 +60,14 @@ public class APIExceptionHandler {
     })
     public ResponseEntity<Object> invalidLogin(VerificationTokenException exception) {
         ClientErrorType errorType = ClientErrorType.INVALID_TOKEN;
+        ClientErrorDTO clientErrorDTO = new ClientErrorDTO(errorType, exception.getMessage());
+        log.warn(exception.getMessage());
+        return new ResponseEntity<>(clientErrorDTO, clientErrorDTO.getType().getHttpStatus());
+    }
+
+    @ExceptionHandler(value = ReportNotFoundException.class)
+    public ResponseEntity<Object> reportNotFoundException(ReportNotFoundException exception) {
+        ClientErrorType errorType = ClientErrorType.NOT_FOUND;
         ClientErrorDTO clientErrorDTO = new ClientErrorDTO(errorType, exception.getMessage());
         log.warn(exception.getMessage());
         return new ResponseEntity<>(clientErrorDTO, clientErrorDTO.getType().getHttpStatus());
