@@ -83,14 +83,14 @@ public class ReportController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/{reportId}/comments/")
+    @GetMapping("/{reportId}/comments")
     public ResponseEntity<List<CommentDTO>> getComments(@PathVariable("reportId") Long reportId) {
         return ResponseEntity.ok(reportService.getCommentsForReport(reportId).stream()
                 .map(commentMapper::toDTO)
                 .collect(Collectors.toList()));
     }
 
-    @PostMapping("/{reportId}/comments/")
+    @PostMapping("/{reportId}/comments")
     public ResponseEntity<CommentDTO> addComment(@PathVariable("reportId") Long reportId, @RequestBody @Valid CommentRequest commentRequest) {
         Comment saved = reportService.addComment(reportId, commentRequest);
         return ResponseEntity.created(URI.create("/api/v1/reports/" + reportId + "/comments/" + saved.getId()))
