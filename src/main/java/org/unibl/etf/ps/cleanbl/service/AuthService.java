@@ -39,6 +39,7 @@ public class AuthService {
     private static final String VERIFICATION_LINK = "http://localhost:8080/api/v1/auth/accountVerification/";
     private static final String GENERIC_MESSAGE = "Thank you for signing up to CleanBL, please click on below link to activate your account: "
             + VERIFICATION_LINK;
+    private final UserService userService;
     private final UserStatusRepository userStatusRepository;
     private final EndUserRepository endUserRepository;
     private final PasswordEncoder passwordEncoder;
@@ -104,7 +105,8 @@ public class AuthService {
         return new AuthenticationResponse(
                 token,
                 Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()),
-                loginRequest.getUsername());
+                loginRequest.getUsername(),
+                userService.getAuthorities());
     }
 
     private void checkIfUserExists(RegisterRequest registerRequest) {

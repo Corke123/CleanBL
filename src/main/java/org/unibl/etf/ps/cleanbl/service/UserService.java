@@ -9,6 +9,9 @@ import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.model.EndUser;
 import org.unibl.etf.ps.cleanbl.repository.UserRepository;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -24,6 +27,14 @@ public class UserService {
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(s -> s.equals("ROLE_DepartmentOfficer"));
+    }
+
+    public List<String> getAuthorities() {
+        return getCurrentlyLoggedInUser().getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(str -> str.startsWith("ROLE_"))
+                .collect(Collectors.toList());
     }
 
     public EndUser getEndUserByUsername(String username) {
