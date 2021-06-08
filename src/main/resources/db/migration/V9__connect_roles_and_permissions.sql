@@ -13,6 +13,14 @@ INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 1, 17 );
 INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 1, 18 );
 INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 1, 19 );
 INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 1, 20 );
+INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 1, 21 );
+INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 1, 22 );
+INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 1, 23 );
+INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 1, 24 );
+INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 1, 25 );
+INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 1, 26 );
+INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 1, 27 );
+INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 1, 28 );
 
 INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 2, 7 );
 INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 2, 10 );
@@ -27,5 +35,6 @@ INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 3, 9 );
 INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 3, 10 );
 INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 3, 11 );
 INSERT INTO RoleHasPermissions ( roleId, permissionId ) VALUES ( 3, 12 );
+
 
 

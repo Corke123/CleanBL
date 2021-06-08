@@ -22,3 +22,13 @@ INSERT INTO Permission ( Name ) VALUES ( "DepartmentService_Create" );
 INSERT INTO Permission ( Name ) VALUES ( "DepartmentService_Read" );
 INSERT INTO Permission ( Name ) VALUES ( "DepartmentService_Update" );
 INSERT INTO Permission ( Name ) VALUES ( "DepartmentService_Delete" );
+
+INSERT INTO Permission ( Name ) VALUES ( "Street_Create" );
+INSERT INTO Permission ( Name ) VALUES ( "Street_Read" );
+INSERT INTO Permission ( Name ) VALUES ( "Street_Update" );
+INSERT INTO Permission ( Name ) VALUES ( "Street_Delete" );
+
+INSERT INTO Permission ( Name ) VALUES ( "PartOfTheCity_Create" );
+INSERT INTO Permission ( Name ) VALUES ( "PartOfTheCity_Read" );
+INSERT INTO Permission ( Name ) VALUES ( "PartOfTheCity_Update" );
+INSERT INTO Permission ( Name ) VALUES ( "PartOfTheCity_Delete" );
