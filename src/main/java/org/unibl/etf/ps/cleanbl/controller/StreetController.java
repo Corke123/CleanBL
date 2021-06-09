@@ -37,7 +37,7 @@ public class StreetController {
                                                        @RequestParam(value = "sort", defaultValue = "name") String sortColumn,
                                                        @RequestParam(value = "order", defaultValue = "ASC") String sortOrder,
                                                        @RequestParam(value = "name", defaultValue = "") String name,
-                                                       @RequestParam(value = "partOfTheCity", defaultValue = "") String partOfTheCity) {
+                                                       @RequestParam(value = "part-of-the-city", defaultValue = "") String partOfTheCity) {
         return ResponseEntity.ok(
                 streetService.getAllFiltered(
                         PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(sortOrder), sortColumn)),
