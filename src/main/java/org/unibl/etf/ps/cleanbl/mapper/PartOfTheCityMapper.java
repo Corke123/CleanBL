@@ -7,4 +7,6 @@ import org.unibl.etf.ps.cleanbl.model.PartOfTheCity;
 @Mapper(componentModel = "spring")
 public interface PartOfTheCityMapper {
     PartOfTheCityDTO toDTO(PartOfTheCity partOfTheCity);
+
+    PartOfTheCity toEntity(PartOfTheCityDTO partOfTheCityDTO);
 }
