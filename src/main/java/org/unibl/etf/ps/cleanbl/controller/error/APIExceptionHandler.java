@@ -2,6 +2,7 @@ package org.unibl.etf.ps.cleanbl.controller.error;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -70,6 +71,14 @@ public class APIExceptionHandler {
         ClientErrorType errorType = ClientErrorType.NOT_FOUND;
         ClientErrorDTO clientErrorDTO = new ClientErrorDTO(errorType, exception.getMessage());
         log.warn(exception.getMessage());
+        return new ResponseEntity<>(clientErrorDTO, clientErrorDTO.getType().getHttpStatus());
+    }
+
+    @ExceptionHandler(value = DataIntegrityViolationException.class)
+    public ResponseEntity<Object> unableDeleteRecordException(DataIntegrityViolationException exception) {
+        ClientErrorType errorType = ClientErrorType.DATABASE_INTEGRITY_CONSTRAINT_VIOLATION_EXCEPTION;
+        ClientErrorDTO clientErrorDTO = new ClientErrorDTO(errorType, errorType.getMessage());
+        log.warn(errorType.getMessage());
         return new ResponseEntity<>(clientErrorDTO, clientErrorDTO.getType().getHttpStatus());
     }
 }
