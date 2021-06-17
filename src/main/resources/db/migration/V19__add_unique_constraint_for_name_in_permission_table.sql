@@ -1,0 +1,1 @@
+ALTER TABLE Permission ADD UNIQUE INDEX name_UNIQUE (name ASC);

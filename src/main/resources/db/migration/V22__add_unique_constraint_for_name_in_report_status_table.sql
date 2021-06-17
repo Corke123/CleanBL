@@ -1,0 +1,1 @@
+ALTER TABLE ReportStatus ADD UNIQUE INDEX name_UNIQUE (name ASC);
