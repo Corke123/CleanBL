@@ -8,6 +8,6 @@ import org.unibl.etf.ps.cleanbl.model.Comment;
 @Mapper(componentModel = "spring")
 public interface CommentMapper {
     @Mapping(target = "reportId", source = "report.id")
-    @Mapping(target = "username", source = "endUser.username")
+    @Mapping(target = "username", source = "user.username")
     CommentDTO toDTO(Comment comment);
 }

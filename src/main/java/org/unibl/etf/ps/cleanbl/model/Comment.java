@@ -1,16 +1,17 @@
 package org.unibl.etf.ps.cleanbl.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import java.time.Instant;
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 public class Comment {
 
@@ -24,25 +25,19 @@ public class Comment {
     )
     private Report report;
 
-    private Instant dateOfPublication;
+    private LocalDate createdAt;
 
-    @NotBlank(message = "Content is required")
     private String content;
 
     @ManyToOne
     @JoinColumn(
             name = "userId"
     )
-    private EndUser endUser;
+    private User user;
 
     @PrePersist
     private void setDateOfPublication() {
-        this.dateOfPublication = Instant.now();
+        this.createdAt = LocalDate.now();
     }
 
-    public Comment(Report report, String content, EndUser endUser) {
-        this.report = report;
-        this.content = content;
-        this.endUser = endUser;
-    }
 }

@@ -12,8 +12,8 @@ import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.exception.ReportNotFoundException;
 import org.unibl.etf.ps.cleanbl.mapper.ReportMapper;
 import org.unibl.etf.ps.cleanbl.model.Comment;
-import org.unibl.etf.ps.cleanbl.model.EndUser;
 import org.unibl.etf.ps.cleanbl.model.Report;
+import org.unibl.etf.ps.cleanbl.model.User;
 import org.unibl.etf.ps.cleanbl.repository.CommentRepository;
 import org.unibl.etf.ps.cleanbl.repository.ReportRepository;
 import org.unibl.etf.ps.cleanbl.repository.UserRepository;
@@ -52,7 +52,7 @@ public class ReportService {
         log.info("Saving new report");
 
         Report report = Report.builder()
-                .endUser(userService.getEndUserByUsername(userService.getCurrentlyLoggedInUser().getUsername()))
+                .user(userService.getEndUserByUsername(userService.getCurrentlyLoggedInUser().getUsername()))
                 .description(reportRequest.getDescription())
                 .imagePath(UUID.randomUUID() + IMAGE_EXTENSION)
                 .reportStatus(reportStatusService.getSentStatus())
@@ -109,9 +109,13 @@ public class ReportService {
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new ReportNotFoundException("There is " + "no report with id: " + reportId));
         String username = userService.getCurrentlyLoggedInUser().getUsername();
-        EndUser endUser = (EndUser) userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RecordNotFoundException("There is no user with username: " + username));
-        Comment comment = new Comment(report, commentRequest.getContent(), endUser);
+        Comment comment = Comment.builder()
+                .report(report)
+                .content(commentRequest.getContent())
+                .user(user)
+                .build();
         return commentRepository.save(comment);
     }
 

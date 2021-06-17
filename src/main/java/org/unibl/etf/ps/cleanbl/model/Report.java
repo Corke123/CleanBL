@@ -7,13 +7,12 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.Base64;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -29,21 +28,19 @@ public class Report {
 
     @ManyToOne
     @JoinColumn(
-            name = "endUserId"
+            name = "userId"
     )
-    private EndUser endUser;
+    private User user;
 
-    @NotBlank(message = "Description is required")
     private String description;
 
-    @NotBlank(message = "Image path is required")
     private String imagePath;
 
-    private Date createdAt;
+    private LocalDate createdAt;
 
     @ManyToOne
     @JoinColumn(
-            name = "reportStatusId"
+            name = "statusId"
     )
     private ReportStatus reportStatus;
 
@@ -59,9 +56,15 @@ public class Report {
     )
     private Department department;
 
+    @ManyToOne
+    @JoinColumn(
+            name = "departmentServiceId"
+    )
+    private DepartmentService departmentService;
+
     @PrePersist
     public void placedAt() {
-        createdAt = new Date();
+        createdAt = LocalDate.now();
     }
 
     public String encodeImage(String uploadDir) {
@@ -76,6 +79,6 @@ public class Report {
     }
 
     public boolean canUserEditReport(org.springframework.security.core.userdetails.User user) {
-        return endUser.getUsername().equals(user.getUsername());
+        return user.getUsername().equals(user.getUsername());
     }
 }

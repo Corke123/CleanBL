@@ -17,11 +17,11 @@ import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.exception.UsernameTakenException;
 import org.unibl.etf.ps.cleanbl.exception.VerificationTokenException;
 import org.unibl.etf.ps.cleanbl.mapper.UserMapper;
-import org.unibl.etf.ps.cleanbl.model.EndUser;
+import org.unibl.etf.ps.cleanbl.model.User;
 import org.unibl.etf.ps.cleanbl.model.UserStatus;
 import org.unibl.etf.ps.cleanbl.model.VerificationToken;
-import org.unibl.etf.ps.cleanbl.repository.EndUserRepository;
 import org.unibl.etf.ps.cleanbl.repository.RoleRepository;
+import org.unibl.etf.ps.cleanbl.repository.UserRepository;
 import org.unibl.etf.ps.cleanbl.repository.UserStatusRepository;
 import org.unibl.etf.ps.cleanbl.repository.VerificationTokenRepository;
 import org.unibl.etf.ps.cleanbl.security.JwtProvider;
@@ -41,7 +41,7 @@ public class AuthService {
             + VERIFICATION_LINK;
     private final UserService userService;
     private final UserStatusRepository userStatusRepository;
-    private final EndUserRepository endUserRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
     private final EmailService emailService;
@@ -55,24 +55,24 @@ public class AuthService {
         log.info("Creating new account for user: " + registerRequest.getFirstName() + " " + registerRequest.getLastName());
         checkIfUserExists(registerRequest);
 
-        EndUser endUser = userMapper.toEntity(registerRequest);
-        endUser.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        endUser.setUserStatus(userStatusRepository.findByName("inactive")
+        User user = userMapper.toEntity(registerRequest);
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setUserStatus(userStatusRepository.findByName("inactive")
                 .orElseThrow(() -> new RecordNotFoundException("There is no status inactive")));
-        endUser.setRoles(Collections.singletonList(roleRepository.findByName("User")
+        user.setRoles(Collections.singletonList(roleRepository.findByName("User")
                 .orElseThrow(() -> new RecordNotFoundException("There is no role user"))));
-        endUserRepository.save(endUser);
+        userRepository.save(user);
 
-        String token = generateVerificationToken(endUser);
+        String token = generateVerificationToken(user);
         emailService.sendMessage(registerRequest.getEmail(), SUBJECT_MESSAGE, GENERIC_MESSAGE + token);
     }
 
-    private String generateVerificationToken(EndUser endUser) {
+    private String generateVerificationToken(User user) {
         String token = UUID.randomUUID().toString();
 
         VerificationToken verificationToken = new VerificationToken();
         verificationToken.setToken(token);
-        verificationToken.setUser(endUser);
+        verificationToken.setUser(user);
 
         verificationTokenRepository.save(verificationToken);
 
@@ -87,12 +87,12 @@ public class AuthService {
     @Transactional
     private void fetchUserAndEnable(VerificationToken verificationToken) {
         String username = verificationToken.getUser().getUsername();
-        EndUser user = endUserRepository.findByUsername(verificationToken.getUser().getUsername())
+        User user = userRepository.findByUsername(verificationToken.getUser().getUsername())
                 .orElseThrow(() -> new VerificationTokenException("User not found with username: " + username));
         UserStatus activeStatus = userStatusRepository.findByName("active")
                 .orElseThrow(() -> new RecordNotFoundException("Unknown user status"));
         user.setUserStatus(activeStatus);
-        endUserRepository.save(user);
+        userRepository.save(user);
         log.info("User with id " + user.getId() + " activated his account");
     }
 
@@ -110,12 +110,12 @@ public class AuthService {
     }
 
     private void checkIfUserExists(RegisterRequest registerRequest) {
-        if (endUserRepository.existsByEmail(registerRequest.getEmail())) {
+        if (userRepository.existsByEmail(registerRequest.getEmail())) {
             log.info("Attempt to register with taken email: " + registerRequest.getEmail());
             throw new EmailTakenException("Email is taken");
         }
 
-        if (endUserRepository.existsByUsername(registerRequest.getUsername())) {
+        if (userRepository.existsByUsername(registerRequest.getUsername())) {
             log.info("Attempt to register with taken username: " + registerRequest.getUsername());
             throw new UsernameTakenException("Username is taken");
         }

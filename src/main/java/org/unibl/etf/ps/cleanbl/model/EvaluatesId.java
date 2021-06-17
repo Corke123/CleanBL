@@ -15,6 +15,7 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class EvaluatesId implements Serializable {
 
+    private static final long serialVersionUID = -5340494269474535260L;
     @ManyToOne
     @JoinColumn(
             name = "reportId"
@@ -23,9 +24,9 @@ public class EvaluatesId implements Serializable {
 
     @ManyToOne
     @JoinColumn(
-            name = "endUserId"
+            name = "userId"
     )
-    private EndUser endUser;
+    private User user;
 
     @ManyToOne
     @JoinColumn(

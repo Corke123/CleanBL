@@ -6,7 +6,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
-import org.unibl.etf.ps.cleanbl.model.EndUser;
 import org.unibl.etf.ps.cleanbl.repository.UserRepository;
 
 import java.util.List;
@@ -37,8 +36,8 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public EndUser getEndUserByUsername(String username) {
-        return (EndUser) userRepository.findByUsername(username)
+    public org.unibl.etf.ps.cleanbl.model.User getEndUserByUsername(String username) {
+        return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RecordNotFoundException("There is no user with username: " + username));
     }
 

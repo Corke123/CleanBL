@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.time.LocalDate;
 
 
 @Data
@@ -12,7 +12,7 @@ import java.time.Instant;
 @NoArgsConstructor
 public class CommentDTO {
     private Long reportId;
-    private Instant dateOfPublication;
+    private LocalDate createdAt;
     private String content;
     private String username;
 }

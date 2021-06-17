@@ -7,8 +7,6 @@ import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -25,23 +23,16 @@ public class User {
     )
     private Long id;
 
-    @NotBlank(message = "Username is required")
     private String username;
 
-    @NotBlank(message = "First name is required")
     private String firstName;
 
-    @NotBlank(message = "Last name is required")
     private String lastName;
 
     @Email
-    @NotBlank(message = "E-mail is required")
     private String email;
 
-    @NotBlank(message = "Password is required")
     private String password;
-
-    private Instant created;
 
     @ManyToMany
     @JoinTable(
@@ -61,8 +52,9 @@ public class User {
     )
     private UserStatus userStatus;
 
-    @PrePersist
-    public void createdAt() {
-        created = Instant.now();
-    }
+    @ManyToOne
+    @JoinColumn(
+            name = "departmentId"
+    )
+    private Department department;
 }
