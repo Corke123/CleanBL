@@ -49,6 +49,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .hasAnyAuthority("Report_Update", "Role_DepartmentOfficer")
                 .antMatchers(HttpMethod.GET, "/api/v1/departments")
                 .permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1/contact-us-messages")
+                .permitAll()
                 .anyRequest()
                 .authenticated();
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
