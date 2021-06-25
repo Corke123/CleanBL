@@ -13,16 +13,11 @@ import org.unibl.etf.ps.cleanbl.dto.AuthenticationResponse;
 import org.unibl.etf.ps.cleanbl.dto.LoginRequest;
 import org.unibl.etf.ps.cleanbl.dto.RegisterRequest;
 import org.unibl.etf.ps.cleanbl.exception.EmailTakenException;
-import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.exception.UsernameTakenException;
 import org.unibl.etf.ps.cleanbl.exception.VerificationTokenException;
 import org.unibl.etf.ps.cleanbl.mapper.UserMapper;
 import org.unibl.etf.ps.cleanbl.model.User;
-import org.unibl.etf.ps.cleanbl.model.UserStatus;
 import org.unibl.etf.ps.cleanbl.model.VerificationToken;
-import org.unibl.etf.ps.cleanbl.repository.RoleRepository;
-import org.unibl.etf.ps.cleanbl.repository.UserRepository;
-import org.unibl.etf.ps.cleanbl.repository.UserStatusRepository;
 import org.unibl.etf.ps.cleanbl.repository.VerificationTokenRepository;
 import org.unibl.etf.ps.cleanbl.security.JwtProvider;
 
@@ -37,15 +32,14 @@ public class AuthService {
 
     private static final String SUBJECT_MESSAGE = "Please activate your account";
     private static final String VERIFICATION_LINK = "http://localhost:8080/api/v1/auth/accountVerification/";
-    private static final String GENERIC_MESSAGE = "Thank you for signing up to CleanBL, please click on below link to activate your account: "
+    private static final String GENERIC_MESSAGE = "Hvala što ste se prijavili na CleanBL! Kliknite na sljedeći link kako bi aktivirali nalog: "
             + VERIFICATION_LINK;
     private final UserService userService;
-    private final UserStatusRepository userStatusRepository;
-    private final UserRepository userRepository;
+    private final UserStatusService userStatusService;
     private final PasswordEncoder passwordEncoder;
     private final VerificationTokenRepository verificationTokenRepository;
     private final EmailService emailService;
-    private final RoleRepository roleRepository;
+    private final RoleService roleService;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final UserMapper userMapper;
@@ -55,13 +49,11 @@ public class AuthService {
         log.info("Creating new account for user: " + registerRequest.getFirstName() + " " + registerRequest.getLastName());
         checkIfUserExists(registerRequest);
 
-        User user = userMapper.toEntity(registerRequest);
+        User user = userMapper.toEntityFromRegisterRequest(registerRequest);
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
-        user.setUserStatus(userStatusRepository.findByName("inactive")
-                .orElseThrow(() -> new RecordNotFoundException("There is no status inactive")));
-        user.setRoles(Collections.singletonList(roleRepository.findByName("User")
-                .orElseThrow(() -> new RecordNotFoundException("There is no role user"))));
-        userRepository.save(user);
+        user.setUserStatus(userStatusService.getInactiveStatus());
+        user.setRoles(Collections.singletonList(roleService.getUserRole()));
+        userService.save(user);
 
         String token = generateVerificationToken(user);
         emailService.sendMessage(registerRequest.getEmail(), SUBJECT_MESSAGE, GENERIC_MESSAGE + token);
@@ -86,13 +78,9 @@ public class AuthService {
 
     @Transactional
     private void fetchUserAndEnable(VerificationToken verificationToken) {
-        String username = verificationToken.getUser().getUsername();
-        User user = userRepository.findByUsername(verificationToken.getUser().getUsername())
-                .orElseThrow(() -> new VerificationTokenException("User not found with username: " + username));
-        UserStatus activeStatus = userStatusRepository.findByName("active")
-                .orElseThrow(() -> new RecordNotFoundException("Unknown user status"));
-        user.setUserStatus(activeStatus);
-        userRepository.save(user);
+        User user = userService.getEndUserByUsername(verificationToken.getUser().getUsername());
+        user.setUserStatus(userStatusService.getActiveStatus());
+        userService.save(user);
         log.info("User with id " + user.getId() + " activated his account");
     }
 
@@ -110,12 +98,12 @@ public class AuthService {
     }
 
     private void checkIfUserExists(RegisterRequest registerRequest) {
-        if (userRepository.existsByEmail(registerRequest.getEmail())) {
+        if (userService.existsByEmail(registerRequest.getEmail())) {
             log.info("Attempt to register with taken email: " + registerRequest.getEmail());
             throw new EmailTakenException("Email is taken");
         }
 
-        if (userRepository.existsByUsername(registerRequest.getUsername())) {
+        if (userService.existsByUsername(registerRequest.getUsername())) {
             log.info("Attempt to register with taken username: " + registerRequest.getUsername());
             throw new UsernameTakenException("Username is taken");
         }

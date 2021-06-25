@@ -42,7 +42,7 @@ public class PartOfTheCityController {
     }
 
     @GetMapping("/pageable")
-    @PreAuthorize("hasAnyAuthority('PartOfTheCity_Read', 'Role_Admin')")
+    @PreAuthorize("hasAnyAuthority('PartOfTheCity_Read', 'ROLE_Admin')")
     public ResponseEntity<Page<PartOfTheCityDTO>> getFiltered(
             @RequestParam(value = "page", defaultValue = PAGE) Integer page,
             @RequestParam(value = "size", defaultValue = SIZE) Integer size,
@@ -55,7 +55,7 @@ public class PartOfTheCityController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyAuthority('PartOfTheCity_Create', 'Role_Admin')")
+    @PreAuthorize("hasAnyAuthority('PartOfTheCity_Create', 'ROLE_Admin')")
     public ResponseEntity<PartOfTheCityDTO> add(@Valid @RequestBody PartOfTheCityDTO partOfTheCityDTO) {
         PartOfTheCity created = partOfTheCityService.add(partOfTheCityMapper.toEntity(partOfTheCityDTO));
         return ResponseEntity.created(URI.create("/api/v1/parts-of-the-city/" + created.getId()))
@@ -63,14 +63,14 @@ public class PartOfTheCityController {
     }
 
     @PutMapping(path = "/{id}")
-    @PreAuthorize("hasAnyAuthority('PartOfTheCity_Update', 'Role_Admin')")
+    @PreAuthorize("hasAnyAuthority('PartOfTheCity_Update', 'ROLE_Admin')")
     public ResponseEntity<PartOfTheCityDTO> update(@PathVariable("id") Long id,
                                                    @Valid @RequestBody PartOfTheCityDTO partOfTheCityDTO) {
         return ResponseEntity.ok(partOfTheCityMapper.toDTO(partOfTheCityService.update(id, partOfTheCityDTO)));
     }
 
     @DeleteMapping(path = "/{id}")
-    @PreAuthorize("hasAnyAuthority('PartOfTheCity_Delete', 'Role_Admin')")
+    @PreAuthorize("hasAnyAuthority('PartOfTheCity_Delete', 'ROLE_Admin')")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         partOfTheCityService.delete(id);
         return ResponseEntity.ok().build();
