@@ -3,6 +3,8 @@ package org.unibl.etf.ps.cleanbl.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unibl.etf.ps.cleanbl.dto.CommentRequest;
@@ -69,9 +71,9 @@ public class ReportService {
         return saved;
     }
 
-    public List<Report> getAllReports() {
-        log.info("Getting all reports");
-        return reportRepository.findAll();
+    public Page<Report> getAllReports(PageRequest pageRequest) {
+        log.info("Getting all reports by page: " + pageRequest.getPageNumber());
+        return reportRepository.findAll(pageRequest);
     }
 
     public Optional<Report> getReport(Long id) throws ReportNotFoundException {
