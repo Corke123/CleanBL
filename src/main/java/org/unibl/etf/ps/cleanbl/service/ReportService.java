@@ -54,7 +54,7 @@ public class ReportService {
         log.info("Saving new report");
 
         Report report = Report.builder()
-                .user(userService.getEndUserByUsername(userService.getCurrentlyLoggedInUser().getUsername()))
+                .user(userService.getUserByUsername(userService.getCurrentlyLoggedInUser().getUsername()))
                 .description(reportRequest.getDescription())
                 .imagePath(UUID.randomUUID() + IMAGE_EXTENSION)
                 .reportStatus(reportStatusService.getSentStatus())
