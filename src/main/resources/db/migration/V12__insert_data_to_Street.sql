@@ -22,7 +22,6 @@ INSERT INTO Street (name, partOfTheCityId) VALUES ("Bulevar cara Dušana", '3');
 INSERT INTO Street (name, partOfTheCityId) VALUES ("Vladislava Skarića", '4');
 INSERT INTO Street (name, partOfTheCityId) VALUES ("Carigradska", '4');
 INSERT INTO Street (name, partOfTheCityId) VALUES ("Siniše Mijatovića", '4');
-INSERT INTO Street (name, partOfTheCityId) VALUES ("Siniše Mijatovića", '4');
 INSERT INTO Street (name, partOfTheCityId) VALUES ("Mis Adeline Irbi", '4');
 INSERT INTO Street (name, partOfTheCityId) VALUES ("Miloša Pocerca", '4');
 
