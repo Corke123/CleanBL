@@ -32,7 +32,7 @@ public class ReportController {
     private String uploadDir;
 
     private static final String PAGE = "1";
-    private static final int SIZE = 12;
+    private static final String SIZE = "12";
 
     private final ReportService reportService;
     private final ReportMapper reportMapper;
@@ -40,8 +40,10 @@ public class ReportController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<Page<ReportResponse>> getAllReports(@RequestParam(value = "page", defaultValue = PAGE) Integer page) {
-        return ResponseEntity.ok(reportService.getAllReports(PageRequest.of(page, SIZE))
+    public ResponseEntity<Page<ReportResponse>> getAllReports(
+            @RequestParam(value = "page", defaultValue = PAGE) Integer page,
+            @RequestParam(value = "size", defaultValue = SIZE) Integer size) {
+        return ResponseEntity.ok(reportService.getAllReports(PageRequest.of(page, size))
                 .map(this::createReportResponseFromReport));
     }
 
