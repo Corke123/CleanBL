@@ -43,7 +43,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public User getEndUserByUsername(String username) {
+    public User getUserByUsername(String username) {
         log.info("Finding user by username: " + username);
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RecordNotFoundException("There is no user with username: " + username));
@@ -70,7 +70,7 @@ public class UserService {
         emailService.sendMessage(
                 user.getEmail(),
                 "Kreiranje naloga",
-                "Kredencijali za pristu sistemu su korisničko ime: " + user.getUsername() + ", lozinka: " + password);
+                "Kredencijali za pristup sistemu su korisničko ime: " + user.getUsername() + ", lozinka: " + password);
         return result;
     }
 

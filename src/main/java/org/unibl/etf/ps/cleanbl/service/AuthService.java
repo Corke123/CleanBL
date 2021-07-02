@@ -78,7 +78,7 @@ public class AuthService {
 
     @Transactional
     private void fetchUserAndEnable(VerificationToken verificationToken) {
-        User user = userService.getEndUserByUsername(verificationToken.getUser().getUsername());
+        User user = userService.getUserByUsername(verificationToken.getUser().getUsername());
         user.setUserStatus(userStatusService.getActiveStatus());
         userService.save(user);
         log.info("User with id " + user.getId() + " activated his account");
