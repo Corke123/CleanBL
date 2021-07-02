@@ -2,6 +2,8 @@ package org.unibl.etf.ps.cleanbl.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,16 +31,20 @@ public class ReportController {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+    private static final String PAGE = "1";
+    private static final String SIZE = "12";
+
     private final ReportService reportService;
     private final ReportMapper reportMapper;
     private final CommentMapper commentMapper;
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<ReportResponse>> getAllReports() {
-        return ResponseEntity.ok(reportService.getAllReports().stream()
-                .map(this::createReportResponseFromReport)
-                .collect(Collectors.toList()));
+    public ResponseEntity<Page<ReportResponse>> getAllReports(
+            @RequestParam(value = "page", defaultValue = PAGE) Integer page,
+            @RequestParam(value = "size", defaultValue = SIZE) Integer size) {
+        return ResponseEntity.ok(reportService.getAllReports(PageRequest.of(page, size))
+                .map(this::createReportResponseFromReport));
     }
 
     @PostMapping
