@@ -14,6 +14,7 @@ import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.exception.ReportNotFoundException;
 import org.unibl.etf.ps.cleanbl.mapper.ReportMapper;
 import org.unibl.etf.ps.cleanbl.model.Comment;
+import org.unibl.etf.ps.cleanbl.model.Department;
 import org.unibl.etf.ps.cleanbl.model.Report;
 import org.unibl.etf.ps.cleanbl.model.User;
 import org.unibl.etf.ps.cleanbl.repository.CommentRepository;
@@ -74,6 +75,14 @@ public class ReportService {
     public Page<Report> getAllReports(PageRequest pageRequest) {
         log.info("Getting all reports by page: " + pageRequest.getPageNumber());
         return reportRepository.findAll(pageRequest);
+    }
+
+    public Page<Report> getReportsForDepartmentOfficer(PageRequest pageRequest) {
+        Department department = userService.getUserByUsername(userService.getCurrentlyLoggedInUser().getUsername())
+                .getDepartment();
+        log.info("Getting all reports for department: " + department.getName() + " by page = " + pageRequest.getPageNumber() +
+                " and size = " + pageRequest.getPageSize());
+        return reportRepository.findAllByDepartment(department, pageRequest);
     }
 
     public Optional<Report> getReport(Long id) throws ReportNotFoundException {

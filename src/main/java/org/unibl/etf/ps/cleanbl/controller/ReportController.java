@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.unibl.etf.ps.cleanbl.dto.CommentDTO;
 import org.unibl.etf.ps.cleanbl.dto.CommentRequest;
@@ -31,7 +32,7 @@ public class ReportController {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-    private static final String PAGE = "1";
+    private static final String PAGE = "0";
     private static final String SIZE = "12";
 
     private final ReportService reportService;
@@ -44,6 +45,16 @@ public class ReportController {
             @RequestParam(value = "page", defaultValue = PAGE) Integer page,
             @RequestParam(value = "size", defaultValue = SIZE) Integer size) {
         return ResponseEntity.ok(reportService.getAllReports(PageRequest.of(page, size))
+                .map(this::createReportResponseFromReport));
+    }
+
+    @GetMapping("/department-officer")
+    @PreAuthorize("hasRole('ROLE_DepartmentOfficer')")
+    public ResponseEntity<Page<ReportResponse>> getDepartmentOfficersReports(
+            @RequestParam(value = "page", defaultValue = PAGE) Integer page,
+            @RequestParam(value = "size", defaultValue = SIZE) Integer size
+    ) {
+        return ResponseEntity.ok(reportService.getReportsForDepartmentOfficer(PageRequest.of(page, size))
                 .map(this::createReportResponseFromReport));
     }
 
