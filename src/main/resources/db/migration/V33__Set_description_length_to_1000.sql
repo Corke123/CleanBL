@@ -1,0 +1,2 @@
+ALTER TABLE Report
+CHANGE COLUMN description description VARCHAR(1000) CHARACTER SET 'utf8' NOT NULL ;
