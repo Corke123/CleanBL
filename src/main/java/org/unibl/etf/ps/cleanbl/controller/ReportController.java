@@ -8,14 +8,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.unibl.etf.ps.cleanbl.dto.CommentDTO;
-import org.unibl.etf.ps.cleanbl.dto.CommentRequest;
-import org.unibl.etf.ps.cleanbl.dto.ReportRequest;
-import org.unibl.etf.ps.cleanbl.dto.ReportResponse;
+import org.unibl.etf.ps.cleanbl.dto.*;
 import org.unibl.etf.ps.cleanbl.mapper.CommentMapper;
 import org.unibl.etf.ps.cleanbl.mapper.ReportMapper;
 import org.unibl.etf.ps.cleanbl.model.Comment;
 import org.unibl.etf.ps.cleanbl.model.Report;
+import org.unibl.etf.ps.cleanbl.service.DepartmentService;
+import org.unibl.etf.ps.cleanbl.service.DepartmentServiceService;
 import org.unibl.etf.ps.cleanbl.service.ReportService;
 import org.unibl.etf.ps.cleanbl.service.UserService;
 
@@ -39,6 +38,8 @@ public class ReportController {
     private final ReportMapper reportMapper;
     private final CommentMapper commentMapper;
     private final UserService userService;
+    private final DepartmentService departmentService;
+    private final DepartmentServiceService departmentServiceService;
 
     @GetMapping
     public ResponseEntity<Page<ReportResponse>> getAllReports(
@@ -97,6 +98,50 @@ public class ReportController {
                         return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
                     }
                 })
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}/department")
+    @PreAuthorize("hasRole('ROLE_DepartmentOfficer')")
+    public ResponseEntity<ReportResponse> updateDepartment(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody DepartmentDTO departmentDTO) {
+        return reportService.getReport(id)
+                .map(report -> ResponseEntity.ok(
+                        this.createReportResponseFromReport(
+                                reportService.modifyDepartment(
+                                        report,
+                                        departmentService.getByName(departmentDTO.getDepartment())))))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}/department-service")
+    @PreAuthorize("hasRole('ROLE_DepartmentOfficer')")
+    public ResponseEntity<ReportResponse> updateDepartmentService(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody DepartmentServiceDTO departmentServiceDTO) {
+        return reportService.getReport(id)
+                .map(report -> ResponseEntity.ok(
+                        this.createReportResponseFromReport(
+                                reportService.setDepartmentServiceAndMoveToInProcess(
+                                        report,
+                                        departmentServiceService.getByName(departmentServiceDTO.getDepartmentService())))))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}/approve")
+    @PreAuthorize("hasRole('ROLE_DepartmentOfficer')")
+    public ResponseEntity<ReportResponse> approveReport(@PathVariable("id") Long id) {
+        return reportService.getReport(id)
+                .map(report -> ResponseEntity.ok(this.createReportResponseFromReport(reportService.approveReport(report))))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping("/{id}/reject")
+    @PreAuthorize("hasRole('ROLE_DepartmentOfficer')")
+    public ResponseEntity<ReportResponse> rejectReport(@PathVariable("id") Long id) {
+        return reportService.getReport(id)
+                .map(report -> ResponseEntity.ok(this.createReportResponseFromReport(reportService.rejectReport(report))))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
