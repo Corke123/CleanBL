@@ -13,6 +13,16 @@ public class ReportStatusService {
 
     public ReportStatus getSentStatus() {
         return repository.findByName("poslan")
-                .orElseThrow(() -> new RecordNotFoundException("Unable to find report status with name poslan"));
+                .orElseThrow(() -> new RecordNotFoundException("Unable to find report status with name 'poslan'"));
+    }
+
+    public ReportStatus getInProcessStatus() {
+        return repository.findByName("u procesu")
+                .orElseThrow(() -> new RecordNotFoundException("Unable to find report status with name 'u procesu'"));
+    }
+
+    public ReportStatus getCompletedStatus() {
+        return repository.findByName("zavrsen")
+                .orElseThrow(() -> new RecordNotFoundException("Unable to find report status with name 'zavrsen'"));
     }
 }
