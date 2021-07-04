@@ -12,5 +12,7 @@ public interface ReportMapper {
     @Mapping(target = "street", source = "report.street.name")
     @Mapping(target = "partOfTheCity", source = "report.street.partOfTheCity.name")
     @Mapping(target = "department", source = "report.department.name")
+    @Mapping(target = "departmentService", source = "report.departmentService.name")
+    @Mapping(target = "valid", source = "valid")
     ReportResponse reportToReportResponse(Report report);
 }

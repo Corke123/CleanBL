@@ -17,7 +17,7 @@ import java.util.Base64;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 @Slf4j
 @Entity
 public class Report {
@@ -37,6 +37,10 @@ public class Report {
     private String imagePath;
 
     private LocalDate createdAt;
+
+    private Boolean valid;
+
+    private LocalDate processed;
 
     @ManyToOne
     @JoinColumn(
