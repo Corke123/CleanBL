@@ -9,10 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unibl.etf.ps.cleanbl.dto.CommentRequest;
 import org.unibl.etf.ps.cleanbl.dto.ReportRequest;
-import org.unibl.etf.ps.cleanbl.dto.ReportResponse;
 import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.exception.ReportNotFoundException;
-import org.unibl.etf.ps.cleanbl.mapper.ReportMapper;
 import org.unibl.etf.ps.cleanbl.model.Comment;
 import org.unibl.etf.ps.cleanbl.model.Department;
 import org.unibl.etf.ps.cleanbl.model.Report;
@@ -25,6 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -34,9 +33,6 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class ReportService {
-
-    @Value("${file.upload-dir}")
-    private String uploadDir;
 
     private static final String IMAGE_EXTENSION = ".jpg";
 
@@ -48,7 +44,9 @@ public class ReportService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;
-    private final ReportMapper reportMapper;
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
 
     @Transactional
     public Report saveReport(ReportRequest reportRequest) {
@@ -68,8 +66,17 @@ public class ReportService {
 
         saveImage(report.getImagePath(), reportRequest.getBase64Image());
 
-
         return saved;
+    }
+
+    private void saveImage(String imageName, String base64Image) {
+        Path path = Paths.get(uploadDir + imageName);
+        try {
+            Files.write(path, Base64.getDecoder().decode(base64Image));
+            log.debug("Image saved to: " + uploadDir + imageName);
+        } catch (IOException e) {
+            log.info("Unable to save image on path: " + uploadDir + imageName);
+        }
     }
 
     public Page<Report> getAllReports(PageRequest pageRequest) {
@@ -96,6 +103,15 @@ public class ReportService {
         reportRepository.delete(report);
     }
 
+    private void deleteImage(String image) {
+        try {
+            Files.delete(Path.of(uploadDir + image));
+            log.info("Deleting file: + " + image);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Transactional
     public void updateReport(Report report, ReportRequest reportRequest) throws ReportNotFoundException {
         log.info("Updating report with id: " + report.getId());
@@ -105,6 +121,29 @@ public class ReportService {
                 partOfTheCityService.getPartOfTheCityByName(reportRequest.getPartOfTheCity())));
 
         reportRepository.save(report);
+    }
+
+    public Report modifyDepartment(Report report, Department department) {
+        log.info("Set department " + department.getName() + " to report with id: " + report.getId());
+        return reportRepository.save(report.toBuilder().department(department).build());
+    }
+
+    public Report approveReport(Report report) {
+        log.info("Approve report with id: " + report.getId());
+        return reportRepository.save(report.toBuilder()
+                .reportStatus(reportStatusService.getCompletedStatus())
+                .valid(true)
+                .processed(LocalDate.now())
+                .build());
+    }
+
+    public Report rejectReport(Report report) {
+        log.info("Reject report with id: " + report.getId());
+        return reportRepository.save(report.toBuilder()
+                .reportStatus(reportStatusService.getCompletedStatus())
+                .valid(false)
+                .processed(LocalDate.now())
+                .build());
     }
 
     @Transactional(readOnly = true)
@@ -130,28 +169,11 @@ public class ReportService {
         return commentRepository.save(comment);
     }
 
-    private void saveImage(String imageName, String base64Image) {
-        Path path = Paths.get(uploadDir + imageName);
-        try {
-            Files.write(path, Base64.getDecoder().decode(base64Image));
-            log.debug("Image saved to: " + uploadDir + imageName);
-        } catch (IOException e) {
-            log.info("Unable to save image on path: " + uploadDir + imageName);
-        }
-    }
-
-    private void deleteImage(String image) {
-        try {
-            Files.delete(Path.of(uploadDir + image));
-            log.info("Deleting file: + " + image);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private ReportResponse createReportResponseFromReport(Report report) {
-        ReportResponse response = reportMapper.reportToReportResponse(report);
-        response.setBase64Image(report.encodeImage(uploadDir));
-        return response;
+    public Report setDepartmentServiceAndMoveToInProcess(Report report,
+                                                         org.unibl.etf.ps.cleanbl.model.DepartmentService departmentService) {
+        log.info("Set department service with name: " + departmentService.getName()
+                + " to report with id: " + report.getId());
+        return reportRepository.save(report.toBuilder().departmentService(departmentService)
+                .reportStatus(reportStatusService.getInProcessStatus()).build());
     }
 }

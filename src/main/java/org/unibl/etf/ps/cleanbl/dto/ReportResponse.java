@@ -18,5 +18,8 @@ public class ReportResponse {
     private String street;
     private String partOfTheCity;
     private String department;
+    private String departmentService;
+    private Boolean valid;
+    private LocalDate processed;
     private String base64Image;
 }
