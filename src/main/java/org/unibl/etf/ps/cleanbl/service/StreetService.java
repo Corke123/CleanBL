@@ -11,6 +11,8 @@ import org.unibl.etf.ps.cleanbl.model.PartOfTheCity;
 import org.unibl.etf.ps.cleanbl.model.Street;
 import org.unibl.etf.ps.cleanbl.repository.StreetRepository;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -18,8 +20,13 @@ public class StreetService {
     private final StreetRepository streetRepository;
     private final PartOfTheCityService partOfTheCityService;
 
+    public Optional<Street> getById(Long id) {
+        log.info("Find street by id: " + id);
+        return streetRepository.findById(id);
+    }
+
     public Street getByNameAndPartOfTheCity(String name, PartOfTheCity partOfTheCity) {
-        log.info("Find street by name and part of the city");
+        log.info("Find street by name: " + name + " and part of the city: " + partOfTheCity.getName());
         return streetRepository.findByNameAndPartOfTheCity(name, partOfTheCity)
                 .orElseThrow(() -> new RecordNotFoundException("Unable to find street with name: " + name));
     }
@@ -41,18 +48,9 @@ public class StreetService {
         }
     }
 
-    public Street add(Street street) {
+    public Street save(Street street) {
         log.info("Adding new street with name: " + street.getName());
         return streetRepository.save(street);
-    }
-
-    public Street update(Long id, StreetRequest streetRequest) {
-        log.info("Updating street with id: " + id);
-        Street saved = streetRepository.findById(id)
-                .orElseThrow(() -> new RecordNotFoundException("There is no street with id: " + id));
-        saved.setName(streetRequest.getName());
-        saved.setPartOfTheCity(partOfTheCityService.getPartOfTheCityByName(streetRequest.getPartOfTheCity()));
-        return streetRepository.save(saved);
     }
 
     public void delete(Long id) {

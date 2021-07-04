@@ -50,7 +50,7 @@ public class StreetController {
     @PreAuthorize("hasAnyAuthority('Street_Create', 'Role_Admin')")
     public ResponseEntity<StreetDTO> add(@Valid @RequestBody StreetRequest streetRequest) {
         PartOfTheCity partOfTheCity = partOfTheCityService.getPartOfTheCityByName(streetRequest.getPartOfTheCity());
-        Street created = streetService.add(streetMapper.toEntity(streetRequest, partOfTheCity));
+        Street created = streetService.save(streetMapper.toEntity(streetRequest, partOfTheCity));
         return ResponseEntity.created(URI.create("/api/v1/streets/" + created.getId()))
                 .body(streetMapper.toDTO(created));
     }
@@ -58,13 +58,22 @@ public class StreetController {
     @PutMapping(path = "/{id}")
     @PreAuthorize("hasAnyAuthority('Street_Update', 'Role_Admin')")
     public ResponseEntity<StreetDTO> update(@PathVariable("id") Long id, @Valid @RequestBody StreetRequest streetRequest) {
-        return ResponseEntity.ok(streetMapper.toDTO(streetService.update(id, streetRequest)));
+        return streetService.getById(id)
+                .map(street -> ResponseEntity.ok(streetMapper.toDTO(streetService.save(street.toBuilder()
+                        .name(streetRequest.getName())
+                        .partOfTheCity(partOfTheCityService.getPartOfTheCityByName(streetRequest.getPartOfTheCity()))
+                        .build()))))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping(path = "/{id}")
     @PreAuthorize("hasAnyAuthority('Street_Delete', 'Role_Admin')")
-    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        streetService.delete(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+        return streetService.getById(id)
+                .map(street -> {
+                    streetService.delete(street.getId());
+                    return ResponseEntity.ok().build();
+                })
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
