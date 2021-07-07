@@ -1,9 +1,6 @@
 package org.unibl.etf.ps.cleanbl.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -13,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Entity
+@Builder
 public class UserStatus {
 
     @Id
