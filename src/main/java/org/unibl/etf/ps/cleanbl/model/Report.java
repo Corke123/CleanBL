@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Base64;
 
 @Data
@@ -32,15 +33,21 @@ public class Report {
     )
     private User user;
 
+    private String title;
+
     private String description;
 
     private String imagePath;
 
-    private LocalDate createdAt;
+    private LocalDateTime createdAt;
 
     private Boolean valid;
 
-    private LocalDate processed;
+    private LocalDateTime processed;
+
+    private Double latitude;
+
+    private Double longitude;
 
     @ManyToOne
     @JoinColumn(
@@ -48,11 +55,6 @@ public class Report {
     )
     private ReportStatus reportStatus;
 
-    @ManyToOne
-    @JoinColumn(
-            name = "streetId"
-    )
-    private Street street;
 
     @ManyToOne
     @JoinColumn(
@@ -68,7 +70,7 @@ public class Report {
 
     @PrePersist
     public void placedAt() {
-        createdAt = LocalDate.now();
+        createdAt = LocalDateTime.now();
     }
 
     public String encodeImage(String uploadDir) {

@@ -14,14 +14,17 @@ public class ReportRequest {
     @NotBlank(message = "Department name is required")
     private String departmentName;
 
+    @NotBlank(message = "Title is required")
+    private String title;
+
     @NotBlank(message = "Description is required")
     private String description;
 
-    @NotBlank(message = "Street is required")
-    private String street;
+    @NotBlank(message = "Latitude is required")
+    private Double latitude;
 
-    @NotBlank(message = "Part of the city is required")
-    private String partOfTheCity;
+    @NotBlank(message = "Longitude is required")
+    private Double longitude;
 
     private String base64Image;
 }
