@@ -1,7 +1,8 @@
 create table clean_bl.reportlog
 (
     id BIGINT AUTO_INCREMENT,
-    dateAndTime DATETIME NOT NULL,
+    description VARCHAR(255) NOT NULL,
+    changedAt DATETIME NOT NULL,
     userId BIGINT NOT NULL,
     reportId BIGINT NOT NULL,
     PRIMARY KEY (id),
