@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
+import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
@@ -21,10 +22,10 @@ public class ReportRequest {
     private String description;
 
     @NotBlank(message = "Latitude is required")
-    private Double latitude;
+    private BigDecimal latitude;
 
     @NotBlank(message = "Longitude is required")
-    private Double longitude;
+    private BigDecimal longitude;
 
     private String base64Image;
 }

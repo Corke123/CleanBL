@@ -8,9 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.*;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Base64;
@@ -45,9 +47,9 @@ public class Report {
 
     private LocalDateTime processed;
 
-    private Double latitude;
+    private BigDecimal latitude;
 
-    private Double longitude;
+    private BigDecimal longitude;
 
     @ManyToOne
     @JoinColumn(
