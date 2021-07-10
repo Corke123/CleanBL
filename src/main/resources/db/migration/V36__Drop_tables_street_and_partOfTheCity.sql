@@ -1,2 +1,2 @@
-drop table street;
-drop table partofthecity;
+drop table Street;
+drop table PartOfTheCity;
