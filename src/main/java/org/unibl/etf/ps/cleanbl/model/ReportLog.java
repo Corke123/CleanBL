@@ -39,5 +39,4 @@ public class ReportLog {
 
     @PrePersist
     public void placedAt(){ changedAt = LocalDateTime.now();}
-
 }
