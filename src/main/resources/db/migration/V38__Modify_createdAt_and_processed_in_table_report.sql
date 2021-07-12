@@ -1,2 +1,2 @@
-alter table clean_bl.report modify column createdAt DATETIME NOT NULL;
-alter table clean_bl.report modify column processed DATETIME NOT NULL;
+alter table Report modify column createdAt DATETIME NOT NULL;
+alter table Report modify column processed DATETIME NOT NULL;
