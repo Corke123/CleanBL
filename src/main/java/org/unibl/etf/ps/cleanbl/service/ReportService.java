@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -39,8 +39,6 @@ public class ReportService {
     private final ReportRepository reportRepository;
     private final ReportStatusService reportStatusService;
     private final DepartmentService departmentService;
-    private final PartOfTheCityService partOfTheCityService;
-    private final StreetService streetService;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;
@@ -54,11 +52,12 @@ public class ReportService {
 
         Report report = Report.builder()
                 .user(userService.getUserByUsername(userService.getCurrentlyLoggedInUser().getUsername()))
+                .title(reportRequest.getTitle())
                 .description(reportRequest.getDescription())
                 .imagePath(UUID.randomUUID() + IMAGE_EXTENSION)
                 .reportStatus(reportStatusService.getSentStatus())
-                .street(streetService.getByNameAndPartOfTheCity(reportRequest.getStreet(),
-                        partOfTheCityService.getPartOfTheCityByName(reportRequest.getPartOfTheCity())))
+                .latitude(reportRequest.getLatitude())
+                .longitude(reportRequest.getLongitude())
                 .department(departmentService.getByName(reportRequest.getDepartmentName()))
                 .build();
 
@@ -116,9 +115,10 @@ public class ReportService {
     public void updateReport(Report report, ReportRequest reportRequest) throws ReportNotFoundException {
         log.info("Updating report with id: " + report.getId());
         report.setDepartment(departmentService.getByName(reportRequest.getDepartmentName()));
+        report.setTitle(reportRequest.getTitle());
         report.setDescription(reportRequest.getDescription());
-        report.setStreet(streetService.getByNameAndPartOfTheCity(reportRequest.getStreet(),
-                partOfTheCityService.getPartOfTheCityByName(reportRequest.getPartOfTheCity())));
+        report.setLatitude(reportRequest.getLatitude());
+        report.setLongitude(reportRequest.getLongitude());
 
         reportRepository.save(report);
     }
@@ -133,7 +133,7 @@ public class ReportService {
         return reportRepository.save(report.toBuilder()
                 .reportStatus(reportStatusService.getCompletedStatus())
                 .valid(true)
-                .processed(LocalDate.now())
+                .processed(LocalDateTime.now())
                 .build());
     }
 
@@ -142,7 +142,7 @@ public class ReportService {
         return reportRepository.save(report.toBuilder()
                 .reportStatus(reportStatusService.getCompletedStatus())
                 .valid(false)
-                .processed(LocalDate.now())
+                .processed(LocalDateTime.now())
                 .build());
     }
 
