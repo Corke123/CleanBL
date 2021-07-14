@@ -1,6 +1,7 @@
 package org.unibl.etf.ps.cleanbl.service;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
