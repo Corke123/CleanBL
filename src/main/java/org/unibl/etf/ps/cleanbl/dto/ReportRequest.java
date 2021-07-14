@@ -31,5 +31,6 @@ public class ReportRequest {
     @DecimalMax(value = "180", message = "Maximum valid latitude is 180")
     private BigDecimal longitude;
 
+    @NotBlank(message = "Image is required")
     private String base64Image;
 }
