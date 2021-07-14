@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.DecimalMax;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 
 @Data
@@ -23,10 +24,12 @@ public class ReportRequest {
     @NotBlank(message = "Description is required")
     private String description;
 
+    @NotNull
     @DecimalMin(value = "-90", message = "Minimum valid latitude is -90")
     @DecimalMax(value = "90", message = "Maximum valid latitude is 90")
     private BigDecimal latitude;
 
+    @NotNull
     @DecimalMin(value = "-180", message = "Minimum valid latitude is -180")
     @DecimalMax(value = "180", message = "Maximum valid latitude is 180")
     private BigDecimal longitude;
