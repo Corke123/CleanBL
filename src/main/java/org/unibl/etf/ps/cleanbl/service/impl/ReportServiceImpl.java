@@ -19,6 +19,9 @@ import org.unibl.etf.ps.cleanbl.repository.CommentRepository;
 import org.unibl.etf.ps.cleanbl.repository.ReportRepository;
 import org.unibl.etf.ps.cleanbl.repository.UserRepository;
 import org.unibl.etf.ps.cleanbl.service.ReportService;
+import org.unibl.etf.ps.cleanbl.service.ReportStatusService;
+import org.unibl.etf.ps.cleanbl.service.DepartmentService;
+import org.unibl.etf.ps.cleanbl.service.UserService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -39,7 +42,7 @@ public class ReportServiceImpl implements ReportService {
 
     private final ReportRepository reportRepository;
     private final ReportStatusService reportStatusService;
-    private final DepartmentServiceImpl departmentService;
+    private final DepartmentService departmentService;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;

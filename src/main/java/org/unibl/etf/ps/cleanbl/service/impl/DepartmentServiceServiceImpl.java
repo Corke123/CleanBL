@@ -7,6 +7,7 @@ import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.model.DepartmentService;
 import org.unibl.etf.ps.cleanbl.repository.DepartmentServiceRepository;
 import org.unibl.etf.ps.cleanbl.service.DepartmentServiceService;
+import org.unibl.etf.ps.cleanbl.service.UserService;
 
 import java.util.List;
 
