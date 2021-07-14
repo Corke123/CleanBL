@@ -1,4 +1,4 @@
-package org.unibl.etf.ps.cleanbl.service;
+package org.unibl.etf.ps.cleanbl.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
