@@ -1,4 +1,4 @@
-package org.unibl.etf.ps.cleanbl.service;
+package org.unibl.etf.ps.cleanbl.service.impl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
