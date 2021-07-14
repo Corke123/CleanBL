@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.unibl.etf.ps.cleanbl.model.Department;
 import org.unibl.etf.ps.cleanbl.repository.DepartmentRepository;
+import org.unibl.etf.ps.cleanbl.service.impl.DepartmentServiceImpl;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,9 +16,9 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-class DepartmentServiceTest {
+class DepartmentServiceImplTest {
     @InjectMocks
-    DepartmentService departmentService;
+    DepartmentServiceImpl departmentService;
 
     @Mock
     DepartmentRepository departmentRepository;
