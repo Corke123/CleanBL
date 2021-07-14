@@ -22,6 +22,9 @@ import org.unibl.etf.ps.cleanbl.repository.VerificationTokenRepository;
 import org.unibl.etf.ps.cleanbl.security.JwtProvider;
 import org.unibl.etf.ps.cleanbl.service.AuthService;
 import org.unibl.etf.ps.cleanbl.service.EmailService;
+import org.unibl.etf.ps.cleanbl.service.RoleService;
+import org.unibl.etf.ps.cleanbl.service.UserService;
+import org.unibl.etf.ps.cleanbl.service.UserStatusService;
 
 import java.time.Instant;
 import java.util.Collections;
