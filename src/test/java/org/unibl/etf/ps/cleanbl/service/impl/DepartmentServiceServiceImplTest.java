@@ -1,4 +1,4 @@
-package org.unibl.etf.ps.cleanbl.service;
+package org.unibl.etf.ps.cleanbl.service.impl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,6 +10,7 @@ import org.unibl.etf.ps.cleanbl.model.Department;
 import org.unibl.etf.ps.cleanbl.model.User;
 import org.unibl.etf.ps.cleanbl.repository.DepartmentServiceRepository;
 import org.unibl.etf.ps.cleanbl.model.DepartmentService;
+import org.unibl.etf.ps.cleanbl.service.UserService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,10 +19,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-class DepartmentServiceServiceTest {
+class DepartmentServiceServiceImplTest {
 
     @InjectMocks
-    DepartmentServiceService departmentServiceService;
+    DepartmentServiceServiceImpl departmentServiceService;
 
     @Mock
     DepartmentServiceRepository departmentServiceRepository;

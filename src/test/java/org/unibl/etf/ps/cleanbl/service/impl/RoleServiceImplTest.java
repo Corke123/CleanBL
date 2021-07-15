@@ -1,4 +1,4 @@
-package org.unibl.etf.ps.cleanbl.service;
+package org.unibl.etf.ps.cleanbl.service.impl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,15 +8,16 @@ import org.mockito.MockitoAnnotations;
 import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.model.Role;
 import org.unibl.etf.ps.cleanbl.repository.RoleRepository;
+import org.unibl.etf.ps.cleanbl.service.impl.RoleServiceImpl;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-class RoleServiceTest {
+class RoleServiceImplTest {
     @InjectMocks
-    RoleService roleService;
+    RoleServiceImpl roleService;
 
     @Mock
     RoleRepository roleRepository;

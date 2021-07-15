@@ -1,4 +1,4 @@
-package org.unibl.etf.ps.cleanbl.service;
+package org.unibl.etf.ps.cleanbl.service.impl;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,15 +8,16 @@ import org.mockito.MockitoAnnotations;
 import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.model.UserStatus;
 import org.unibl.etf.ps.cleanbl.repository.UserStatusRepository;
+import org.unibl.etf.ps.cleanbl.service.impl.UserStatusServiceImpl;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-class UserStatusServiceTest {
+class UserStatusServiceImplTest {
     @InjectMocks
-    UserStatusService userStatusService;
+    UserStatusServiceImpl userStatusService;
 
     @Mock
     UserStatusRepository userStatusRepository;
