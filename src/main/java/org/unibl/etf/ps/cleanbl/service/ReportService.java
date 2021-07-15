@@ -11,11 +11,9 @@ import org.unibl.etf.ps.cleanbl.dto.CommentRequest;
 import org.unibl.etf.ps.cleanbl.dto.ReportRequest;
 import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.exception.ReportNotFoundException;
-import org.unibl.etf.ps.cleanbl.model.Comment;
-import org.unibl.etf.ps.cleanbl.model.Department;
-import org.unibl.etf.ps.cleanbl.model.Report;
-import org.unibl.etf.ps.cleanbl.model.User;
+import org.unibl.etf.ps.cleanbl.model.*;
 import org.unibl.etf.ps.cleanbl.repository.CommentRepository;
+import org.unibl.etf.ps.cleanbl.repository.ReportCriteriaRepository;
 import org.unibl.etf.ps.cleanbl.repository.ReportRepository;
 import org.unibl.etf.ps.cleanbl.repository.UserRepository;
 
@@ -37,6 +35,7 @@ public class ReportService {
     private static final String IMAGE_EXTENSION = ".jpg";
 
     private final ReportRepository reportRepository;
+    private final ReportCriteriaRepository reportCriteriaRepository;
     private final ReportStatusService reportStatusService;
     private final DepartmentService departmentService;
     private final UserRepository userRepository;
@@ -78,9 +77,8 @@ public class ReportService {
         }
     }
 
-    public Page<Report> getAllReports(PageRequest pageRequest) {
-        log.info("Getting all reports by page: " + pageRequest.getPageNumber());
-        return reportRepository.findAll(pageRequest);
+    public Page<Report> getAllReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria) {
+        return reportCriteriaRepository.findAllWithFilters(reportPage,reportSearchCriteria);
     }
 
     public Page<Report> getReportsForDepartmentOfficer(PageRequest pageRequest) {

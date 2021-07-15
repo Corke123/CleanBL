@@ -13,6 +13,8 @@ import org.unibl.etf.ps.cleanbl.mapper.CommentMapper;
 import org.unibl.etf.ps.cleanbl.mapper.ReportMapper;
 import org.unibl.etf.ps.cleanbl.model.Comment;
 import org.unibl.etf.ps.cleanbl.model.Report;
+import org.unibl.etf.ps.cleanbl.model.ReportPage;
+import org.unibl.etf.ps.cleanbl.model.ReportSearchCriteria;
 import org.unibl.etf.ps.cleanbl.service.DepartmentService;
 import org.unibl.etf.ps.cleanbl.service.DepartmentServiceService;
 import org.unibl.etf.ps.cleanbl.service.ReportService;
@@ -42,11 +44,8 @@ public class ReportController {
     private final DepartmentServiceService departmentServiceService;
 
     @GetMapping
-    public ResponseEntity<Page<ReportResponse>> getAllReports(
-            @RequestParam(value = "page", defaultValue = PAGE) Integer page,
-            @RequestParam(value = "size", defaultValue = SIZE) Integer size) {
-        return ResponseEntity.ok(reportService.getAllReports(PageRequest.of(page, size))
-                .map(this::createReportResponseFromReport));
+    public ResponseEntity<Page<ReportResponse>> getAllReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria) {
+        return new ResponseEntity(reportService.getAllReports(reportPage,reportSearchCriteria),HttpStatus.OK);
     }
 
     @GetMapping("/department-officer")
