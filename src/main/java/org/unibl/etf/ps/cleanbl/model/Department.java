@@ -1,6 +1,5 @@
 package org.unibl.etf.ps.cleanbl.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -29,6 +28,6 @@ public class Department {
             fetch = FetchType.LAZY,
             mappedBy = "department"
     )
-    @JsonIgnore
+
     private List<Report> reports;
 }

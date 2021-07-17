@@ -2,19 +2,16 @@ package org.unibl.etf.ps.cleanbl.repository;
 
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
-import org.unibl.etf.ps.cleanbl.model.Report;
-import org.unibl.etf.ps.cleanbl.model.ReportPage;
-import org.unibl.etf.ps.cleanbl.model.ReportSearchCriteria;
-
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import org.unibl.etf.ps.cleanbl.model.Report;
+import org.unibl.etf.ps.cleanbl.dto.ReportPage;
+import org.unibl.etf.ps.cleanbl.dto.ReportSearchCriteria;
 
 @Repository
 public class ReportCriteriaRepository {
@@ -38,40 +35,32 @@ public class ReportCriteriaRepository {
         Pageable pageable =getPageable(reportPage);
         Long reportCount = getReportsCount(predicate);
         return new PageImpl<>(typedQuery.getResultList(),pageable,reportCount);
-
     }
 
     private Predicate getPredicate(ReportSearchCriteria reportSearchCriteria, Root<Report> reportRoot) {
         List<Predicate> predicates = new ArrayList<>();
-        if(Objects.nonNull(reportSearchCriteria.getStatus())){
+        if (Objects.nonNull(reportSearchCriteria.getStatus())) {
             predicates.add(
-                    criteriaBuilder.like(reportRoot.get("status"),"%" + reportSearchCriteria.getStatus() + "%")
+                    criteriaBuilder.like(reportRoot.get("reportStatus").get("name"), "%" +reportSearchCriteria.getStatus() + "%")
             );
         }
-        if(Objects.nonNull(reportSearchCriteria.getUserName())){
+        if (Objects.nonNull(reportSearchCriteria.getUsername())) {
             predicates.add(
-                    criteriaBuilder.like(reportRoot.get("userName"), "%" + reportSearchCriteria.getUserName() + "%")
+                    criteriaBuilder.like(reportRoot.get("user").get("username"), "%" + reportSearchCriteria.getUsername() + "%")
             );
         }
-        if(Objects.nonNull(reportSearchCriteria.getTitle())){
+        if (Objects.nonNull(reportSearchCriteria.getTitle())) {
             predicates.add(
                     criteriaBuilder.like(reportRoot.get("title"), "%" + reportSearchCriteria.getTitle() + "%")
             );
         }
-        if(Objects.nonNull(reportSearchCriteria.getCreatedAt())){
-            predicates.add(
-                    criteriaBuilder.like(reportRoot.get("createdAt"), "%" + reportSearchCriteria.getCreatedAt() + "%")
-            );
-        }
-
         return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
     }
 
-
     private void setOrder(ReportPage reportPage, CriteriaQuery<Report> criteriaQuery, Root<Report> reportRoot) {
-        if(reportPage.getSortDirection().equals(Sort.Direction.ASC)) {
+        if (reportPage.getSortDirection().equals(Sort.Direction.ASC)) {
             criteriaQuery.orderBy(criteriaBuilder.asc(reportRoot.get(reportPage.getSortBy())));
-        }else {
+        } else {
             criteriaQuery.orderBy(criteriaBuilder.desc(reportRoot.get(reportPage.getSortBy())));
         }
     }
@@ -80,7 +69,6 @@ public class ReportCriteriaRepository {
         Sort sort = Sort.by(reportPage.getSortDirection(), reportPage.getSortBy());
         return PageRequest.of(reportPage.getPageNumber(), reportPage.getPageSize(),sort);
     }
-
 
     private Long getReportsCount(Predicate predicate) {
         CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
