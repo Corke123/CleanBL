@@ -28,20 +28,20 @@ public class ReportCriteriaRepository {
         Root<Report> reportRoot = criteriaQuery.from(Report.class);
         Predicate predicate = getPredicate(reportSearchCriteria, reportRoot);
         criteriaQuery.where(predicate);
-        setOrder(reportPage,criteriaQuery,reportRoot);
+        setOrder(reportPage, criteriaQuery, reportRoot);
         TypedQuery<Report> typedQuery = entityManager.createQuery(criteriaQuery);
         typedQuery.setFirstResult(reportPage.getPageNumber() * reportPage.getPageSize());
         typedQuery.setMaxResults(reportPage.getPageSize());
-        Pageable pageable =getPageable(reportPage);
+        Pageable pageable = getPageable(reportPage);
         Long reportCount = getReportsCount(predicate);
-        return new PageImpl<>(typedQuery.getResultList(),pageable,reportCount);
+        return new PageImpl<>(typedQuery.getResultList(), pageable, reportCount);
     }
 
     private Predicate getPredicate(ReportSearchCriteria reportSearchCriteria, Root<Report> reportRoot) {
         List<Predicate> predicates = new ArrayList<>();
         if (Objects.nonNull(reportSearchCriteria.getStatus())) {
             predicates.add(
-                    criteriaBuilder.like(reportRoot.get("reportStatus").get("name"), "%" +reportSearchCriteria.getStatus() + "%")
+                    criteriaBuilder.like(reportRoot.get("reportStatus").get("name"), "%" + reportSearchCriteria.getStatus() + "%")
             );
         }
         if (Objects.nonNull(reportSearchCriteria.getUsername())) {
@@ -67,7 +67,7 @@ public class ReportCriteriaRepository {
 
     private Pageable getPageable(ReportPage reportPage) {
         Sort sort = Sort.by(reportPage.getSortDirection(), reportPage.getSortBy());
-        return PageRequest.of(reportPage.getPageNumber(), reportPage.getPageSize(),sort);
+        return PageRequest.of(reportPage.getPageNumber(), reportPage.getPageSize(), sort);
     }
 
     private Long getReportsCount(Predicate predicate) {

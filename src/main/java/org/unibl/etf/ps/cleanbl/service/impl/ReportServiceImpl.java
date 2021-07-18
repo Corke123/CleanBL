@@ -51,6 +51,7 @@ public class ReportServiceImpl implements ReportService {
     @Value("${file.upload-dir}")
     private String uploadDir;
 
+    @Override
     @Transactional
     public Report saveReport(ReportRequest reportRequest) {
         log.info("Saving new report");
@@ -84,7 +85,8 @@ public class ReportServiceImpl implements ReportService {
     }
 
     public Page<Report> getAllReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria) {
-        return reportCriteriaRepository.findAllWithFilters(reportPage,reportSearchCriteria);
+        log.info("Getting all filtered pages: " + reportPage.getPageNumber() + " sorted by: " + reportPage.getSortBy());
+        return reportCriteriaRepository.findAllWithFilters(reportPage, reportSearchCriteria);
     }
 
     public Page<Report> getReportsForDepartmentOfficer(PageRequest pageRequest) {

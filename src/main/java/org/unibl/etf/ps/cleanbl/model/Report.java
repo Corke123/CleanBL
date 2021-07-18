@@ -31,7 +31,6 @@ public class Report {
     @JoinColumn(
             name = "userId"
     )
-
     private User user;
 
     private String title;
