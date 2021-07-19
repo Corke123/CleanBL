@@ -1,10 +1,10 @@
 package org.unibl.etf.ps.cleanbl.model;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -45,17 +45,20 @@ public class User {
                     name = "roleId", referencedColumnName = "id"
             )
     )
+
     private List<Role> roles;
 
     @ManyToOne
     @JoinColumn(
             name = "statusId"
     )
+
     private UserStatus userStatus;
 
     @ManyToOne
     @JoinColumn(
             name = "departmentId"
     )
+
     private Department department;
 }

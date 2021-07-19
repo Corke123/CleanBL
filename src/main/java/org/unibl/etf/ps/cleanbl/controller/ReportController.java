@@ -42,11 +42,8 @@ public class ReportController {
     private final DepartmentServiceService departmentServiceService;
 
     @GetMapping
-    public ResponseEntity<Page<ReportResponse>> getAllReports(
-            @RequestParam(value = "page", defaultValue = PAGE) Integer page,
-            @RequestParam(value = "size", defaultValue = SIZE) Integer size) {
-        return ResponseEntity.ok(reportService.getAllReports(PageRequest.of(page, size))
-                .map(this::createReportResponseFromReport));
+    public ResponseEntity<Page<ReportResponse>> getAllReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria) {
+        return  ResponseEntity.ok(reportService.getAllReports(reportPage,reportSearchCriteria).map(this::createReportResponseFromReport));
     }
 
     @GetMapping("/department-officer")

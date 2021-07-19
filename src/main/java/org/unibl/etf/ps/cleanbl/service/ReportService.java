@@ -3,11 +3,11 @@ package org.unibl.etf.ps.cleanbl.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.unibl.etf.ps.cleanbl.dto.CommentRequest;
+import org.unibl.etf.ps.cleanbl.dto.ReportPage;
 import org.unibl.etf.ps.cleanbl.dto.ReportRequest;
+import org.unibl.etf.ps.cleanbl.dto.ReportSearchCriteria;
 import org.unibl.etf.ps.cleanbl.exception.ReportNotFoundException;
-import org.unibl.etf.ps.cleanbl.model.Comment;
-import org.unibl.etf.ps.cleanbl.model.Department;
-import org.unibl.etf.ps.cleanbl.model.Report;
+import org.unibl.etf.ps.cleanbl.model.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface ReportService {
 
     Report saveReport(ReportRequest reportRequest);
-    Page<Report> getAllReports(PageRequest pageRequest);
+    Page<Report> getAllReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria);
     Page<Report> getReportsForDepartmentOfficer(PageRequest pageRequest);
     Optional<Report> getReport(Long id) throws ReportNotFoundException;
     void deleteReport(Report report) throws ReportNotFoundException;
