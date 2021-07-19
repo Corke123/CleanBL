@@ -85,7 +85,9 @@ public class ReportServiceImpl implements ReportService {
     }
 
     public Page<Report> getAllReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria) {
-        log.info("Getting all filtered pages: " + reportPage.getPageNumber() + " sorted by: " + reportPage.getSortBy());
+        log.info("Get all page filtered by: " + reportPage.getPageNumber() + " size of page: " + reportPage.getPageSize() + " ordered by: "
+                + reportPage.getSortBy() + " ASC/DESC: " + reportPage.getSortDirection() + " by filters: " + reportSearchCriteria.getStatus()
+                + ", " + reportSearchCriteria.getTitle() + " and " + reportSearchCriteria.getUsername());
         return reportCriteriaRepository.findAllWithFilters(reportPage, reportSearchCriteria);
     }
 
