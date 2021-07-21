@@ -8,17 +8,13 @@ import org.springframework.web.bind.annotation.*;
 import org.unibl.etf.ps.cleanbl.dto.DepartmentOfficerDTO;
 import org.unibl.etf.ps.cleanbl.mapper.UserMapper;
 import org.unibl.etf.ps.cleanbl.model.User;
-import org.unibl.etf.ps.cleanbl.service.DepartmentService;
-import org.unibl.etf.ps.cleanbl.service.RoleService;
-import org.unibl.etf.ps.cleanbl.service.UserService;
-import org.unibl.etf.ps.cleanbl.service.UserStatusService;
+import org.unibl.etf.ps.cleanbl.service.*;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @RestController
@@ -32,6 +28,7 @@ public class UserController {
     private final DepartmentService departmentService;
     private final RoleService roleService;
     private final PasswordEncoder passwordEncoder;
+    private final PasswordGeneratorService passwordGeneratorService;
 
     @GetMapping("/department-officers")
     @PreAuthorize("hasAnyAuthority('DepartmentOfficer_Read', 'ROLE_Admin')")
@@ -44,7 +41,7 @@ public class UserController {
     @PostMapping("/department-officers")
     @PreAuthorize("hasAnyAuthority('DepartmentOfficer_Create', 'ROLE_Admin')")
     public ResponseEntity<DepartmentOfficerDTO> addDepartmentOfficer(@Valid @RequestBody DepartmentOfficerDTO departmentOfficerDTO) {
-        String password = generatePassword();
+        String password = passwordGeneratorService.generateRandomPassword();
         User toCreate = userMapper.toUserFromDepartmentOfficerDTO(departmentOfficerDTO);
         toCreate.setPassword(passwordEncoder.encode(password));
         toCreate.setDepartment(departmentService.getByName(departmentOfficerDTO.getDepartment()));
@@ -78,17 +75,5 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    private String generatePassword() {
-        int passwordLength = 10;
-        Random rand = new Random();
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxyz0123456789";
 
-        StringBuilder sb = new StringBuilder(passwordLength);
-
-        for (int i = 0; i < passwordLength; i++) {
-            sb.append(characters.charAt((int) (characters.length() * rand.nextDouble())));
-        }
-
-        return sb.toString();
-    }
 }
