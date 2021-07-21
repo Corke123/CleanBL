@@ -21,7 +21,10 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.unibl.etf.ps.cleanbl.fixtures.DepartmentFixture.createDepartment;
+import static org.unibl.etf.ps.cleanbl.fixtures.RoleFixture.createRole;
 import static org.unibl.etf.ps.cleanbl.fixtures.UserSpringFixture.*;
+import static org.unibl.etf.ps.cleanbl.fixtures.UserStatusFixture.createUserStatus;
 
 class UserControllerTest {
 
@@ -58,7 +61,7 @@ class UserControllerTest {
     void getDepartmentOfficers_should_return_list_of_department_officers_dto() {
         List<DepartmentOfficerDTO> departmentOfficerDTOList = Collections.singletonList(
                 createDepartmentOfficerDTO());
-        Department department = createDepartment().name("Department 1").build();
+        Department department = createDepartment().build();
         List<User> users = Collections.singletonList(
                 createUser().department(department).build());
 
@@ -100,7 +103,7 @@ class UserControllerTest {
     void updateDepartmentOfficer_should_return_department_officers_dto() {
         Long id = 1L;
         DepartmentOfficerDTO departmentOfficerDTO = createDepartmentOfficerDTO();
-        Department department = createDepartment().name("Department 1").build();
+        Department department = createDepartment().build();
         User user = createUser().department(department).build();
 
         when(userService.getById(id)).thenReturn(Optional.of(user));
@@ -127,7 +130,7 @@ class UserControllerTest {
 
     @Test
     void deleteDepartmentOfficer_should_return_response_entity_status_ok() {
-        Department department = createDepartment().name("Department").build();
+        Department department = createDepartment().build();
         UserStatus userStatus = createUserStatus().build();
         List<Role> rolesList = Collections.singletonList(
                        createRole().build()
