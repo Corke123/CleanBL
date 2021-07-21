@@ -6,7 +6,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
@@ -18,6 +17,7 @@ import org.unibl.etf.ps.cleanbl.service.EmailService;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.unibl.etf.ps.cleanbl.fixtures.RoleFixture.createRole;
 import static org.unibl.etf.ps.cleanbl.fixtures.UserSpringFixture.*;
 
 class UserServiceImplTest {
@@ -63,8 +63,6 @@ class UserServiceImplTest {
         SecurityContextHolder.setContext(securityContext);
         when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(userSpring);
 
-        assertTrue(userSpring.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                .anyMatch(s -> s.equals("ROLE_DepartmentOfficer")));
         assertTrue(userService.isLoggedInUserDepartmentOfficer());
     }
 
@@ -72,15 +70,15 @@ class UserServiceImplTest {
     void getAuthorities_should_return_a_list_of_authorities() {
         org.springframework.security.core.userdetails.User userSpring =
                 (org.springframework.security.core.userdetails.User) crateUserSpring().build();
+        List<String> departmentOfficerAuthorities = Collections.singletonList("ROLE_DepartmentOfficer");
 
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
         when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(userSpring);
-        List<String> stringList = Collections.singletonList("ROLE_DepartmentOfficer");
 
-        assertEquals(stringList, userService.getAuthorities());
+        assertEquals(departmentOfficerAuthorities, userService.getAuthorities());
     }
 
     @Test
