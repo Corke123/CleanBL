@@ -31,29 +31,29 @@ class ReportStatusServiceImplTest {
     @Test
     void getAllStatuses_should_return_all_statuses() {
         List<ReportStatus> list = Arrays.asList(
-                ReportStatusFixture.createSent().build(),
-                ReportStatusFixture.createCompleted().build());
+                ReportStatusFixture.createSent(),
+                ReportStatusFixture.createCompleted());
         when(reportStatusRepository.findAll()).thenReturn(list);
         assertEquals(list, reportStatusService.getAllStatuses());
     }
 
     @Test
     void getSentStatus_should_return_sent_status() {
-        ReportStatus reportStatus = ReportStatusFixture.createSent().build();
+        ReportStatus reportStatus = ReportStatusFixture.createSent();
         when(reportStatusRepository.findByName("poslan")).thenReturn(Optional.of(reportStatus));
         assertEquals(reportStatus, reportStatusService.getSentStatus());
     }
 
     @Test
     void getInProcessStatus_should_return_in_process_status() {
-        ReportStatus reportStatus = ReportStatusFixture.createInProcess().build();
+        ReportStatus reportStatus = ReportStatusFixture.createInProcess();
         when(reportStatusRepository.findByName("u procesu")).thenReturn(Optional.of(reportStatus));
         assertEquals(reportStatus, reportStatusService.getInProcessStatus());
     }
 
     @Test
     void getCompletedStatus_should_return_completed_status() {
-        ReportStatus reportStatus = ReportStatusFixture.createCompleted().build();
+        ReportStatus reportStatus = ReportStatusFixture.createCompleted();
         when(reportStatusRepository.findByName("zavrsen")).thenReturn(Optional.of(reportStatus));
         assertEquals(reportStatus, reportStatusService.getCompletedStatus());
     }
