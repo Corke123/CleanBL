@@ -33,7 +33,7 @@ class ReportStatusControllerTest {
     void getReportServices_should_return_list_of_report_statuses() {
         List<ReportStatus> list = Arrays.asList(
                 ReportStatus.builder().id(1L).name("poslan").build(),
-                ReportStatus.builder().id(2L).name("zavrsen").build());
+                ReportStatus.builder().id(2L).name("završen").build());
         when(reportStatusService.getAllStatuses()).thenReturn(list);
 
         ResponseEntity<List<ReportStatus>> responseEntity = reportStatusController.getReportServices();

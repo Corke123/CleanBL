@@ -12,6 +12,6 @@ public class ReportStatusFixture {
     }
 
     public static ReportStatus createCompleted() {
-        return ReportStatus.builder().id(3L).name("zavrsen").build();
+        return ReportStatus.builder().id(3L).name("završen").build();
     }
 }
