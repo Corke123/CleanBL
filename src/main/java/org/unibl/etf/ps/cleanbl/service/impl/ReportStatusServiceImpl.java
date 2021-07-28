@@ -32,9 +32,9 @@ public class ReportStatusServiceImpl implements ReportStatusService {
 
     @Override
     public ReportStatus getCompletedStatus() {
-        log.info("Find status with name zavrsen");
-        return repository.findByName("zavrsen")
-                .orElseThrow(() -> new RecordNotFoundException("Unable to find report status with name 'zavrsen'"));
+        log.info("Find status with name završen");
+        return repository.findByName("završen")
+                .orElseThrow(() -> new RecordNotFoundException("Unable to find report status with name 'završen'"));
     }
 
     @Override

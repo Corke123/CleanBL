@@ -54,7 +54,7 @@ class ReportStatusServiceImplTest {
     @Test
     void getCompletedStatus_should_return_completed_status() {
         ReportStatus reportStatus = ReportStatusFixture.createCompleted();
-        when(reportStatusRepository.findByName("zavrsen")).thenReturn(Optional.of(reportStatus));
+        when(reportStatusRepository.findByName("završen")).thenReturn(Optional.of(reportStatus));
         assertEquals(reportStatus, reportStatusService.getCompletedStatus());
     }
 
