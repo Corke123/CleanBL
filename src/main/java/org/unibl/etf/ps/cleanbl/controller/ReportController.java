@@ -108,7 +108,7 @@ public class ReportController {
                         this.createReportResponseFromReport(
                                 reportService.modifyDepartment(
                                         report,
-                                        departmentService.getByName(departmentDTO.getDepartment())))))
+                                        departmentService.getByName(departmentDTO.getName())))))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
