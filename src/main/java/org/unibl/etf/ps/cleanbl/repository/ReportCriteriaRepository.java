@@ -37,11 +37,42 @@ public class ReportCriteriaRepository {
         return new PageImpl<>(typedQuery.getResultList(), pageable, reportCount);
     }
 
+    public Page<Report> findAllWithFiltersForDepartmentOfficersReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria) {
+        CriteriaQuery<Report> criteriaQuery = criteriaBuilder.createQuery(Report.class);
+        Root<Report> reportRoot = criteriaQuery.from(Report.class);
+        Predicate predicate = getPredicateForDepartmentOfficersReports(reportSearchCriteria, reportRoot);
+        criteriaQuery.where(predicate);
+        setOrder(reportPage, criteriaQuery, reportRoot);
+        TypedQuery<Report> typedQuery = entityManager.createQuery(criteriaQuery);
+        typedQuery.setFirstResult(reportPage.getPageNumber() * reportPage.getPageSize());
+        typedQuery.setMaxResults(reportPage.getPageSize());
+        Pageable pageable = getPageable(reportPage);
+        Long reportCount = getReportsCount(predicate);
+        return new PageImpl<>(typedQuery.getResultList(), pageable, reportCount);
+    }
+
+    private Predicate getPredicateForDepartmentOfficersReports(ReportSearchCriteria reportSearchCriteria, Root<Report> reportRoot) {
+        List<Predicate> predicates = new ArrayList<>();
+        if (Objects.nonNull(reportSearchCriteria.getUsername())) {
+            predicates.add(
+                    criteriaBuilder.like(reportRoot.get("user").get("username"), "%" + reportSearchCriteria.getUsername() + "%")
+            );
+        }
+        if (Objects.nonNull(reportSearchCriteria.getTitle())) {
+            predicates.add(
+                    criteriaBuilder.like(reportRoot.get("title"), "%" + reportSearchCriteria.getTitle() + "%")
+            );
+        }
+        return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+    }
+
     private Predicate getPredicate(ReportSearchCriteria reportSearchCriteria, Root<Report> reportRoot) {
         List<Predicate> predicates = new ArrayList<>();
         if (Objects.nonNull(reportSearchCriteria.getStatus())) {
             predicates.add(
-                    criteriaBuilder.like(reportRoot.get("reportStatus").get("name"), "%" + reportSearchCriteria.getStatus() + "%")
+                    //if(reportSearchCriteria.getStatus().equals("active"))
+                    //criteriaBuilder.like(reportRoot.get("reportStatus").get("name"), "%" + reportSearchCriteria.getStatus() + "%")
+                    criteriaBuilder.notLike(reportRoot.get("reportStatus").get("name"), "%" + "završen" + "%")
             );
         }
         if (Objects.nonNull(reportSearchCriteria.getUsername())) {

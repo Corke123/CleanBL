@@ -48,13 +48,19 @@ public class ReportController {
 
     @GetMapping("/department-officer")
     @PreAuthorize("hasRole('ROLE_DepartmentOfficer')")
-    public ResponseEntity<Page<ReportResponse>> getDepartmentOfficersReports(
-            @RequestParam(value = "page", defaultValue = PAGE) Integer page,
-            @RequestParam(value = "size", defaultValue = SIZE) Integer size
-    ) {
-        return ResponseEntity.ok(reportService.getReportsForDepartmentOfficer(PageRequest.of(page, size))
-                .map(this::createReportResponseFromReport));
+    public ResponseEntity<Page<ReportResponse>> getDepartmentOfficersReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria) {
+        return ResponseEntity.ok(reportService.getReportsForDepartmentOfficer(reportPage,reportSearchCriteria).map(this::createReportResponseFromReport));
     }
+
+//    @GetMapping("/department-officer")
+//    @PreAuthorize("hasRole('ROLE_DepartmentOfficer')")
+//    public ResponseEntity<Page<ReportResponse>> getDepartmentOfficersReports(
+//            @RequestParam(value = "page", defaultValue = PAGE) Integer page,
+//            @RequestParam(value = "size", defaultValue = SIZE) Integer size
+//    ) {
+//        return ResponseEntity.ok(reportService.getReportsForDepartmentOfficer(PageRequest.of(page, size))
+//                .map(this::createReportResponseFromReport));
+//    }
 
     @PostMapping
     public ResponseEntity<ReportResponse> uploadReport(@Valid @RequestBody ReportRequest reportRequest) {

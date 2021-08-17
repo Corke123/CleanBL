@@ -91,13 +91,16 @@ public class ReportServiceImpl implements ReportService {
         return reportCriteriaRepository.findAllWithFilters(reportPage, reportSearchCriteria);
     }
 
-    public Page<Report> getReportsForDepartmentOfficer(PageRequest pageRequest) {
-        Department department = userService.getUserByUsername(userService.getCurrentlyLoggedInUser().getUsername())
-                .getDepartment();
-        log.info("Getting all reports for department: " + department.getName() + " by page = " + pageRequest.getPageNumber() +
-                " and size = " + pageRequest.getPageSize());
-        return reportRepository.findAllByDepartment(department, pageRequest);
+    public Page<Report> getReportsForDepartmentOfficer(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria) {
+        return reportCriteriaRepository.findAllWithFiltersForDepartmentOfficersReports(reportPage, reportSearchCriteria);
     }
+//    public Page<Report> getReportsForDepartmentOfficer(PageRequest pageRequest) {
+//        Department department = userService.getUserByUsername(userService.getCurrentlyLoggedInUser().getUsername())
+//                .getDepartment();
+//        log.info("Getting all reports for department: " + department.getName() + " by page = " + pageRequest.getPageNumber() +
+//                " and size = " + pageRequest.getPageSize());
+//        return reportRepository.findAllByDepartment(department, pageRequest);
+//    }
 
     public Optional<Report> getReport(Long id) throws ReportNotFoundException {
         log.info("Getting report with id: " + id);
