@@ -15,6 +15,8 @@ import org.unibl.etf.ps.cleanbl.dto.ReportSearchCriteria;
 
 @Repository
 public class ReportCriteriaRepository {
+    private static final String ACTIVE = "active";
+    private static final String INACTIVE = "inactive";
     private final EntityManager entityManager;
     private final CriteriaBuilder criteriaBuilder;
 
@@ -53,6 +55,17 @@ public class ReportCriteriaRepository {
 
     private Predicate getPredicateForDepartmentOfficersReports(ReportSearchCriteria reportSearchCriteria, Root<Report> reportRoot) {
         List<Predicate> predicates = new ArrayList<>();
+        if (Objects.nonNull(reportSearchCriteria.getStatus())) {
+            if(reportSearchCriteria.getStatus().equals(ACTIVE))
+                predicates.add(
+                        criteriaBuilder.notLike(reportRoot.get("reportStatus").get("name"), "%" + "završen" + "%")
+                );
+            else if(reportSearchCriteria.getStatus().equals(INACTIVE)) {
+            predicates.add(
+                    criteriaBuilder.like(reportRoot.get("reportStatus").get("name"), "%" + "završen" + "%")
+            );
+            }
+        }
         if (Objects.nonNull(reportSearchCriteria.getUsername())) {
             predicates.add(
                     criteriaBuilder.like(reportRoot.get("user").get("username"), "%" + reportSearchCriteria.getUsername() + "%")
@@ -70,9 +83,7 @@ public class ReportCriteriaRepository {
         List<Predicate> predicates = new ArrayList<>();
         if (Objects.nonNull(reportSearchCriteria.getStatus())) {
             predicates.add(
-                    //if(reportSearchCriteria.getStatus().equals("active"))
-                    //criteriaBuilder.like(reportRoot.get("reportStatus").get("name"), "%" + reportSearchCriteria.getStatus() + "%")
-                    criteriaBuilder.notLike(reportRoot.get("reportStatus").get("name"), "%" + "završen" + "%")
+                    criteriaBuilder.like(reportRoot.get("reportStatus").get("name"), "%" + reportSearchCriteria.getStatus() + "%")
             );
         }
         if (Objects.nonNull(reportSearchCriteria.getUsername())) {

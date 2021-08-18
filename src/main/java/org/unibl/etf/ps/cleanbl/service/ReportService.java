@@ -17,7 +17,6 @@ public interface ReportService {
     Report saveReport(ReportRequest reportRequest);
     Page<Report> getAllReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria);
     Page<Report> getReportsForDepartmentOfficer(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria);
-    //Page<Report> getReportsForDepartmentOfficer(PageRequest pageRequest);
     Optional<Report> getReport(Long id) throws ReportNotFoundException;
     void deleteReport(Report report) throws ReportNotFoundException;
     void updateReport(Report report, ReportRequest reportRequest) throws ReportNotFoundException;
