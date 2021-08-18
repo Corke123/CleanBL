@@ -43,13 +43,15 @@ public class ReportController {
 
     @GetMapping
     public ResponseEntity<Page<ReportResponse>> getAllReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria) {
-        return  ResponseEntity.ok(reportService.getAllReports(reportPage,reportSearchCriteria).map(this::createReportResponseFromReport));
+        return  ResponseEntity.ok(reportService.getAllReports(reportPage,
+                reportSearchCriteria).map(this::createReportResponseFromReport));
     }
 
     @GetMapping("/department-officer")
     @PreAuthorize("hasRole('ROLE_DepartmentOfficer')")
     public ResponseEntity<Page<ReportResponse>> getDepartmentOfficersReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria) {
-        return ResponseEntity.ok(reportService.getReportsForDepartmentOfficer(reportPage,reportSearchCriteria).map(this::createReportResponseFromReport));
+        return ResponseEntity.ok(reportService.getReportsForDepartmentOfficer(reportPage,
+                reportSearchCriteria).map(this::createReportResponseFromReport));
     }
 
     @PostMapping
