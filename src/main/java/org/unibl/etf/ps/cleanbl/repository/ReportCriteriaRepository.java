@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.unibl.etf.ps.cleanbl.model.Department;
 import org.unibl.etf.ps.cleanbl.model.Report;
 import org.unibl.etf.ps.cleanbl.dto.ReportPage;
 import org.unibl.etf.ps.cleanbl.dto.ReportSearchCriteria;
@@ -39,10 +40,12 @@ public class ReportCriteriaRepository {
         return new PageImpl<>(typedQuery.getResultList(), pageable, reportCount);
     }
 
-    public Page<Report> findAllWithFiltersForDepartmentOfficersReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria) {
+    public Page<Report> findAllWithFiltersForDepartmentOfficersReports(ReportPage reportPage,
+                                                                       ReportSearchCriteria reportSearchCriteria,
+                                                                       Department department) {
         CriteriaQuery<Report> criteriaQuery = criteriaBuilder.createQuery(Report.class);
         Root<Report> reportRoot = criteriaQuery.from(Report.class);
-        Predicate predicate = getPredicateForDepartmentOfficersReports(reportSearchCriteria, reportRoot);
+        Predicate predicate = getPredicateForDepartmentOfficersReports(reportSearchCriteria, reportRoot, department);
         criteriaQuery.where(predicate);
         setOrder(reportPage, criteriaQuery, reportRoot);
         TypedQuery<Report> typedQuery = entityManager.createQuery(criteriaQuery);
@@ -53,8 +56,14 @@ public class ReportCriteriaRepository {
         return new PageImpl<>(typedQuery.getResultList(), pageable, reportCount);
     }
 
-    private Predicate getPredicateForDepartmentOfficersReports(ReportSearchCriteria reportSearchCriteria, Root<Report> reportRoot) {
+    private Predicate getPredicateForDepartmentOfficersReports(ReportSearchCriteria reportSearchCriteria,
+                                                               Root<Report> reportRoot,
+                                                               Department department) {
         List<Predicate> predicates = new ArrayList<>();
+        predicates.add(
+                    criteriaBuilder.like(reportRoot.get("department").get("name"), "%" + department.getName() + "%")
+        );
+
         if (Objects.nonNull(reportSearchCriteria.getStatus())) {
             if(reportSearchCriteria.getStatus().equals(ACTIVE))
                 predicates.add(
