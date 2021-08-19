@@ -11,4 +11,5 @@ public class ReportSearchCriteria {
     private String status;
     private String username;
     private String title;
+    private String departmentName;
 }
