@@ -5,19 +5,20 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@Embeddable
 public class EvaluatesId implements Serializable {
 
     private static final long serialVersionUID = -5340494269474535260L;
+
     @ManyToOne
-    @JoinColumn(
+    @JoinColumn (
             name = "reportId"
     )
     private Report report;
