@@ -1,7 +1,6 @@
 package org.unibl.etf.ps.cleanbl.service;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.unibl.etf.ps.cleanbl.dto.*;
 import org.unibl.etf.ps.cleanbl.exception.ReportNotFoundException;
 import org.unibl.etf.ps.cleanbl.model.*;
@@ -25,4 +24,6 @@ public interface ReportService {
     Report setDepartmentServiceAndMoveToInProcess(Report report,
                                                   org.unibl.etf.ps.cleanbl.model.DepartmentService departmentService);
     Double rateReport(Report report, EvaluatesRequest evaluatesRequest);
+    Double getGrade(Report report);
+    boolean isUserRatedReport(Report report);
 }
