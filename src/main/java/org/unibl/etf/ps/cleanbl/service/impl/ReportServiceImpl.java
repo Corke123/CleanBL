@@ -175,14 +175,9 @@ public class ReportServiceImpl implements ReportService {
         String username = userService.getCurrentlyLoggedInUser().getUsername();
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RecordNotFoundException("There is no user with username: " + username));
-        EvaluatesId evaluatesId = new EvaluatesId();
-        evaluatesId.setReport(report);
-        evaluatesId.setUser(user);
-        evaluatesId.setDepartmentService(report.getDepartmentService());
-
-        Evaluates evaluates = new Evaluates();
-        evaluates.setId(evaluatesId);
-        evaluates.setGrade(evaluatesRequest.getGrade());
+        EvaluatesId evaluatesId = EvaluatesId.builder()
+                .report(report).user(user).departmentService(report.getDepartmentService()).build();
+        Evaluates evaluates = Evaluates.builder().id(evaluatesId).grade(evaluatesRequest.getGrade()).build();
         evaluatesRepository.save(evaluates);
 
         return evaluatesRepository.avg(report.getId());
