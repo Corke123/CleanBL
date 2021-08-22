@@ -154,6 +154,14 @@ public class ReportController {
                 .body(commentMapper.toDTO(saved));
     }
 
+    @PostMapping("/{reportId}/rating")
+    public ResponseEntity<Double> rateReport(@PathVariable("reportId") Long reportId, @RequestBody @Valid EvaluatesRequest evaluatesRequest) {
+
+        return reportService.getReport(reportId)
+                .map(report -> ResponseEntity.ok(reportService.rateReport(report, evaluatesRequest)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
     private ReportResponse createReportResponseFromReport(Report report) {
         ReportResponse response = reportMapper.reportToReportResponse(report);
         response.setBase64Image(report.encodeImage(uploadDir));

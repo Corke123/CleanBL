@@ -7,17 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.unibl.etf.ps.cleanbl.dto.CommentRequest;
-import org.unibl.etf.ps.cleanbl.dto.ReportPage;
-import org.unibl.etf.ps.cleanbl.dto.ReportRequest;
-import org.unibl.etf.ps.cleanbl.dto.ReportSearchCriteria;
+import org.unibl.etf.ps.cleanbl.dto.*;
 import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.exception.ReportNotFoundException;
 import org.unibl.etf.ps.cleanbl.model.*;
-import org.unibl.etf.ps.cleanbl.repository.CommentRepository;
-import org.unibl.etf.ps.cleanbl.repository.ReportCriteriaRepository;
-import org.unibl.etf.ps.cleanbl.repository.ReportRepository;
-import org.unibl.etf.ps.cleanbl.repository.UserRepository;
+import org.unibl.etf.ps.cleanbl.repository.*;
 import org.unibl.etf.ps.cleanbl.service.ReportService;
 import org.unibl.etf.ps.cleanbl.service.ReportStatusService;
 import org.unibl.etf.ps.cleanbl.service.DepartmentService;
@@ -28,10 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -47,6 +38,7 @@ public class ReportServiceImpl implements ReportService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;
+    private final EvaluatesRepository evaluatesRepository;
 
     @Value("${file.upload-dir}")
     private String uploadDir;
@@ -175,6 +167,20 @@ public class ReportServiceImpl implements ReportService {
                 .user(user)
                 .build();
         return commentRepository.save(comment);
+    }
+
+    @Transactional
+    public Double rateReport(Report report, EvaluatesRequest evaluatesRequest) throws ReportNotFoundException {
+        log.info("Adding new rating " + evaluatesRequest.getGrade() + " for report with id: " + report.getId());
+        String username = userService.getCurrentlyLoggedInUser().getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RecordNotFoundException("There is no user with username: " + username));
+        EvaluatesId evaluatesId = EvaluatesId.builder()
+                .report(report).user(user).departmentService(report.getDepartmentService()).build();
+        Evaluates evaluates = Evaluates.builder().id(evaluatesId).grade(evaluatesRequest.getGrade()).build();
+        evaluatesRepository.save(evaluates);
+
+        return evaluatesRepository.avg(report.getId());
     }
 
     public Report setDepartmentServiceAndMoveToInProcess(Report report,
