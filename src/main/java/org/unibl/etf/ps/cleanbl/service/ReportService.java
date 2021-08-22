@@ -2,10 +2,7 @@ package org.unibl.etf.ps.cleanbl.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.unibl.etf.ps.cleanbl.dto.CommentRequest;
-import org.unibl.etf.ps.cleanbl.dto.ReportPage;
-import org.unibl.etf.ps.cleanbl.dto.ReportRequest;
-import org.unibl.etf.ps.cleanbl.dto.ReportSearchCriteria;
+import org.unibl.etf.ps.cleanbl.dto.*;
 import org.unibl.etf.ps.cleanbl.exception.ReportNotFoundException;
 import org.unibl.etf.ps.cleanbl.model.*;
 
@@ -27,4 +24,5 @@ public interface ReportService {
     Comment addComment(Long reportId, CommentRequest commentRequest) throws ReportNotFoundException;
     Report setDepartmentServiceAndMoveToInProcess(Report report,
                                                   org.unibl.etf.ps.cleanbl.model.DepartmentService departmentService);
+    Double rateReport(Report report, EvaluatesRequest evaluatesRequest);
 }

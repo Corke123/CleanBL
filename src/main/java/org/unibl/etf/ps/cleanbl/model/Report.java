@@ -14,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -59,14 +60,12 @@ public class Report {
     @JoinColumn(
             name = "departmentId"
     )
-
     private Department department;
 
     @ManyToOne
     @JoinColumn(
             name = "departmentServiceId"
     )
-
     private DepartmentService departmentService;
 
     @PrePersist

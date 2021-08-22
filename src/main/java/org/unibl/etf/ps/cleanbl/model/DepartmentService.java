@@ -1,5 +1,6 @@
 package org.unibl.etf.ps.cleanbl.model;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
