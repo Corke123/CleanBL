@@ -11,5 +11,9 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class DepartmentServiceDTO {
     @NotBlank(message = "Department service name is required.")
-    private String departmentService;
+    private String name;
+    private Long id;
+    private String email;
+    private String phone;
+
 }
