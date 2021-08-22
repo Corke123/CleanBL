@@ -1,21 +1,20 @@
 package org.unibl.etf.ps.cleanbl.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+@Builder
+@Embeddable
 public class EvaluatesId implements Serializable {
 
     private static final long serialVersionUID = -5340494269474535260L;
+
     @ManyToOne
     @JoinColumn(
             name = "reportId"

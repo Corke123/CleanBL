@@ -59,14 +59,12 @@ public class Report {
     @JoinColumn(
             name = "departmentId"
     )
-
     private Department department;
 
     @ManyToOne
     @JoinColumn(
             name = "departmentServiceId"
     )
-
     private DepartmentService departmentService;
 
     @PrePersist

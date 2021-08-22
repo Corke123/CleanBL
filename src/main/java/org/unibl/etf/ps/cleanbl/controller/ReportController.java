@@ -43,17 +43,15 @@ public class ReportController {
 
     @GetMapping
     public ResponseEntity<Page<ReportResponse>> getAllReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria) {
-        return  ResponseEntity.ok(reportService.getAllReports(reportPage,reportSearchCriteria).map(this::createReportResponseFromReport));
+        return  ResponseEntity.ok(reportService.getAllReports(reportPage,
+                reportSearchCriteria).map(this::createReportResponseFromReport));
     }
 
     @GetMapping("/department-officer")
     @PreAuthorize("hasRole('ROLE_DepartmentOfficer')")
-    public ResponseEntity<Page<ReportResponse>> getDepartmentOfficersReports(
-            @RequestParam(value = "page", defaultValue = PAGE) Integer page,
-            @RequestParam(value = "size", defaultValue = SIZE) Integer size
-    ) {
-        return ResponseEntity.ok(reportService.getReportsForDepartmentOfficer(PageRequest.of(page, size))
-                .map(this::createReportResponseFromReport));
+    public ResponseEntity<Page<ReportResponse>> getDepartmentOfficersReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria) {
+        return ResponseEntity.ok(reportService.getReportsForDepartmentOfficer(reportPage,
+                reportSearchCriteria).map(this::createReportResponseFromReport));
     }
 
     @PostMapping
@@ -122,7 +120,7 @@ public class ReportController {
                         this.createReportResponseFromReport(
                                 reportService.setDepartmentServiceAndMoveToInProcess(
                                         report,
-                                        departmentServiceService.getByName(departmentServiceDTO.getDepartmentService())))))
+                                        departmentServiceService.getByName(departmentServiceDTO.getName())))))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -154,6 +152,14 @@ public class ReportController {
         Comment saved = reportService.addComment(reportId, commentRequest);
         return ResponseEntity.created(URI.create("/api/v1/reports/" + reportId + "/comments/" + saved.getId()))
                 .body(commentMapper.toDTO(saved));
+    }
+
+    @PostMapping("/{reportId}/rating")
+    public ResponseEntity<Double> rateReport(@PathVariable("reportId") Long reportId, @RequestBody @Valid EvaluatesRequest evaluatesRequest) {
+
+        return reportService.getReport(reportId)
+                .map(report -> ResponseEntity.ok(reportService.rateReport(report, evaluatesRequest)))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     private ReportResponse createReportResponseFromReport(Report report) {
