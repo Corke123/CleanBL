@@ -120,7 +120,7 @@ public class ReportController {
                         this.createReportResponseFromReport(
                                 reportService.setDepartmentServiceAndMoveToInProcess(
                                         report,
-                                        departmentServiceService.getByName(departmentServiceDTO.getDepartmentService())))))
+                                        departmentServiceService.getByName(departmentServiceDTO.getName())))))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
