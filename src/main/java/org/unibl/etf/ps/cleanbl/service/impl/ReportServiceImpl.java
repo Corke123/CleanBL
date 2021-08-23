@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.unibl.etf.ps.cleanbl.dto.*;
@@ -210,6 +209,21 @@ public class ReportServiceImpl implements ReportService {
         evaluatesRepository.save(evaluates);
 
         return evaluatesRepository.avg(report.getId());
+    }
+
+    @Override
+    public Double getGrade(Report report) {
+        return evaluatesRepository.avg(report.getId());
+    }
+
+    @Override
+    public boolean isUserRatedReport(Report report) {
+        if(userService.getCurrentlyLoggedInUser() == null)
+            return false;
+        String username = userService.getCurrentlyLoggedInUser().getUsername();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RecordNotFoundException("There is no user with username: " + username));
+        return evaluatesRepository.existsByReportAndUser(report.getId(), user.getId());
     }
 
     public Report setDepartmentServiceAndMoveToInProcess(Report report,

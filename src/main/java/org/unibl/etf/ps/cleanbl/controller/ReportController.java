@@ -3,7 +3,6 @@ package org.unibl.etf.ps.cleanbl.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -165,6 +164,8 @@ public class ReportController {
     private ReportResponse createReportResponseFromReport(Report report) {
         ReportResponse response = reportMapper.reportToReportResponse(report);
         response.setBase64Image(report.encodeImage(uploadDir));
+        response.setGrade(reportService.getGrade(report));
+        response.setUserRated(reportService.isUserRatedReport(report));
         return response;
     }
 }

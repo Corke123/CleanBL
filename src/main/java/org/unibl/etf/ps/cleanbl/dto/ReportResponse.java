@@ -27,4 +27,6 @@ public class ReportResponse {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime processed;
     private String base64Image;
+    private Double grade;
+    private boolean userRated;
 }

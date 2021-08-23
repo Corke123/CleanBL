@@ -28,7 +28,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public org.springframework.security.core.userdetails.User getCurrentlyLoggedInUser() {
-        return (org.springframework.security.core.userdetails.User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal instanceof String ? null : (org.springframework.security.core.userdetails.User) principal;
     }
 
     @Override
