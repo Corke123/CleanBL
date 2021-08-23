@@ -10,7 +10,6 @@ import org.unibl.etf.ps.cleanbl.dto.*;
 import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.exception.ReportNotFoundException;
 import org.unibl.etf.ps.cleanbl.model.*;
-import org.unibl.etf.ps.cleanbl.model.DepartmentService;
 import org.unibl.etf.ps.cleanbl.repository.*;
 import org.unibl.etf.ps.cleanbl.service.*;
 import org.unibl.etf.ps.cleanbl.service.DepartmentService;
