@@ -10,11 +10,10 @@ import org.unibl.etf.ps.cleanbl.dto.*;
 import org.unibl.etf.ps.cleanbl.exception.RecordNotFoundException;
 import org.unibl.etf.ps.cleanbl.exception.ReportNotFoundException;
 import org.unibl.etf.ps.cleanbl.model.*;
+import org.unibl.etf.ps.cleanbl.model.DepartmentService;
 import org.unibl.etf.ps.cleanbl.repository.*;
-import org.unibl.etf.ps.cleanbl.service.ReportService;
-import org.unibl.etf.ps.cleanbl.service.ReportStatusService;
+import org.unibl.etf.ps.cleanbl.service.*;
 import org.unibl.etf.ps.cleanbl.service.DepartmentService;
-import org.unibl.etf.ps.cleanbl.service.UserService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -29,11 +28,23 @@ import java.util.*;
 public class ReportServiceImpl implements ReportService {
 
     private static final String IMAGE_EXTENSION = ".jpg";
+    private static final String TITLE = "title";
+    private static final String TEXT = "text";
+    private static final String REQUEST_LINK = "requestLink";
+    private static final String REPORT_LINK_USER = "http://localhost:4200/reports/";
+    private static final String REPORT_LINK_DEPARTMENT_OFFICER = "http://localhost:4200/management/active-reports/";
+    private static final String RECEIVE_MESSAGE = "Stigao je novi zahtjev, da pregledate kliknite na sledeći link ";
+    private static final String APPROVE_MESSAGE = "Vaš zahtjev je sad uspješno završen, da pregledate kliknite na sledeći link ";
+    private static final String IN_PROCESS_MESSAGE = "Vaš zahtjev je u procesu, da pregledate klinite na sledeći link ";
+    private static final String MODIFY_MESSAGE = "Vaš zahtjev je modifikovan, da pregledate kliknite na sledeći link ";
+    private static final String REJECT_MESSAGE = "Vaš zahtjev je odbijen, da pregledate klinite na sledeći link ";
+    private static final String EMAIL_SUBJECT = "CleanBL obavještenje";
 
     private final ReportRepository reportRepository;
     private final ReportCriteriaRepository reportCriteriaRepository;
     private final ReportStatusService reportStatusService;
     private final DepartmentService departmentService;
+    private final EmailService emailService;
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
     private final UserService userService;
@@ -61,6 +72,8 @@ public class ReportServiceImpl implements ReportService {
         Report saved = reportRepository.save(report);
 
         saveImage(report.getImagePath(), reportRequest.getBase64Image());
+
+        sendMail(RECEIVE_MESSAGE, REPORT_LINK_DEPARTMENT_OFFICER + report.getId(), report.getDepartment().getEmail());
 
         return saved;
     }
@@ -119,30 +132,46 @@ public class ReportServiceImpl implements ReportService {
         report.setLatitude(reportRequest.getLatitude());
         report.setLongitude(reportRequest.getLongitude());
 
+        sendMail(MODIFY_MESSAGE, REPORT_LINK_USER + report.getId(), report.getUser().getEmail());
+        sendMail(RECEIVE_MESSAGE, REPORT_LINK_USER + report.getId(), report.getDepartmentService().getEmail());
+
         reportRepository.save(report);
     }
 
     public Report modifyDepartment(Report report, Department department) {
         log.info("Set department " + department.getName() + " to report with id: " + report.getId());
-        return reportRepository.save(report.toBuilder().department(department).build());
+        Report modifiedReport = reportRepository.save(report.toBuilder().department(department).build());
+
+        sendMail(MODIFY_MESSAGE, REPORT_LINK_USER + report.getId(), report.getUser().getEmail());
+        sendMail(RECEIVE_MESSAGE, REPORT_LINK_DEPARTMENT_OFFICER + report.getId(), report.getDepartment().getEmail());
+
+        return modifiedReport;
     }
 
     public Report approveReport(Report report) {
         log.info("Approve report with id: " + report.getId());
-        return reportRepository.save(report.toBuilder()
+        Report approvedReport = reportRepository.save(report.toBuilder()
                 .reportStatus(reportStatusService.getCompletedStatus())
                 .valid(true)
                 .processed(LocalDateTime.now())
                 .build());
+
+        sendMail(APPROVE_MESSAGE, REPORT_LINK_USER + report.getId(), report.getUser().getEmail());
+
+        return approvedReport;
     }
 
     public Report rejectReport(Report report) {
         log.info("Reject report with id: " + report.getId());
-        return reportRepository.save(report.toBuilder()
+        Report rejectedReport = reportRepository.save(report.toBuilder()
                 .reportStatus(reportStatusService.getCompletedStatus())
                 .valid(false)
                 .processed(LocalDateTime.now())
                 .build());
+
+        sendMail(REJECT_MESSAGE, REPORT_LINK_USER + report.getId(), report.getUser().getEmail());
+
+        return rejectedReport;
     }
 
     @Transactional(readOnly = true)
@@ -201,7 +230,21 @@ public class ReportServiceImpl implements ReportService {
                                                          org.unibl.etf.ps.cleanbl.model.DepartmentService departmentService) {
         log.info("Set department service with name: " + departmentService.getName()
                 + " to report with id: " + report.getId());
-        return reportRepository.save(report.toBuilder().departmentService(departmentService)
+        Report inProcessReport = reportRepository.save(report.toBuilder().departmentService(departmentService)
                 .reportStatus(reportStatusService.getInProcessStatus()).build());
+
+        sendMail(IN_PROCESS_MESSAGE, REPORT_LINK_USER + report.getId(), report.getUser().getEmail());
+        sendMail(RECEIVE_MESSAGE, REPORT_LINK_USER + report.getId(), report.getDepartmentService().getEmail());
+
+        return inProcessReport;
+    }
+
+    private void sendMail(String message, String requestLink, String email) {
+        Map<String, Object> parameters = new HashMap<> ();
+        parameters.put(TITLE, ReportServiceImpl.EMAIL_SUBJECT);
+        parameters.put(TEXT, message);
+        parameters.put(REQUEST_LINK, requestLink);
+
+        emailService.sendMessageUsingThymeleafTemplate(email, ReportServiceImpl.EMAIL_SUBJECT, parameters);
     }
 }
