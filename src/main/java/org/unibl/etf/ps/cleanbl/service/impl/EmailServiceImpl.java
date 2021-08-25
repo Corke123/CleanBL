@@ -71,6 +71,7 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
+    @Async
     public void sendMessageUsingThymeleafTemplate(
             String to, String subject, Map<String, Object> templateModel) {
 
