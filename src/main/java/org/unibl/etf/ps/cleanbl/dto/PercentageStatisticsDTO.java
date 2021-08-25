@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-public interface StatisticsPieDTO {
+public interface PercentageStatisticsDTO {
     String getName();
     Double getY();
 }

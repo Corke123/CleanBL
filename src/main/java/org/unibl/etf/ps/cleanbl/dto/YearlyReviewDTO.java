@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class StatisticsDTO {
+public class YearlyReviewDTO {
     private String name;
     private List<Integer> data;
 }

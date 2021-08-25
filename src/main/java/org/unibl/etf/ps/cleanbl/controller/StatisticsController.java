@@ -3,8 +3,8 @@ package org.unibl.etf.ps.cleanbl.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.unibl.etf.ps.cleanbl.dto.StatisticsDTO;
-import org.unibl.etf.ps.cleanbl.dto.StatisticsPieDTO;
+import org.unibl.etf.ps.cleanbl.dto.YearlyReviewDTO;
+import org.unibl.etf.ps.cleanbl.dto.PercentageStatisticsDTO;
 import org.unibl.etf.ps.cleanbl.service.StatisticsService;
 
 import java.util.List;
@@ -17,17 +17,17 @@ public class StatisticsController {
     private final StatisticsService statisticsService;
 
     @GetMapping
-    public ResponseEntity<List<StatisticsDTO>> getStatistics(@RequestParam Integer year) {
-        return ResponseEntity.ok(statisticsService.getStatistics(year));
+    public ResponseEntity<List<YearlyReviewDTO>> getYearlyReview(@RequestParam Integer year) {
+        return ResponseEntity.ok(statisticsService.getYearlyReview(year));
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<StatisticsPieDTO>> getStatisticsForNumberOfReportsByDepartmentName(@RequestParam Integer year) {
-        return ResponseEntity.ok(statisticsService.getStatisticsForNumberOfReportsByDepartmentName(year));
+    @GetMapping("/by-department")
+    public ResponseEntity<List<PercentageStatisticsDTO>> getPercentageReviewByDepartmentNameAndYear(@RequestParam Integer year) {
+        return ResponseEntity.ok(statisticsService.getPercentageReviewByDepartmentNameAndYear(year));
     }
 
-    @GetMapping("/byDepartment")
-    public ResponseEntity<List<StatisticsPieDTO>> getStatisticsByDepartmentName(@RequestParam Integer year) {
-        return ResponseEntity.ok(statisticsService.getStatisticsByDepartmentName(year));
+    @GetMapping("/by-report-status")
+    public ResponseEntity<List<PercentageStatisticsDTO>> getPercentageReviewByReportStatusAndYear(@RequestParam Integer year) {
+        return ResponseEntity.ok(statisticsService.getPercentageReviewByReportStatusAndYear(year));
     }
 }
