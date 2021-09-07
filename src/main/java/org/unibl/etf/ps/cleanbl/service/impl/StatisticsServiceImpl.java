@@ -6,10 +6,8 @@ import org.springframework.stereotype.Service;
 import org.unibl.etf.ps.cleanbl.dto.StatisticsDTO;
 import org.unibl.etf.ps.cleanbl.model.DepartmentService;
 import org.unibl.etf.ps.cleanbl.model.Evaluates;
-import org.unibl.etf.ps.cleanbl.model.ReportStatus;
 import org.unibl.etf.ps.cleanbl.repository.EvaluatesRepository;
 import org.unibl.etf.ps.cleanbl.repository.ReportRepository;
-import org.unibl.etf.ps.cleanbl.service.ReportStatusService;
 import org.unibl.etf.ps.cleanbl.service.StatisticsService;
 
 import java.time.Month;
@@ -24,22 +22,16 @@ import java.util.OptionalDouble;
 public class StatisticsServiceImpl implements StatisticsService {
 
     private final ReportRepository reportRepository;
-    private final ReportStatusService reportStatusService;
     private final EvaluatesRepository evaluatesRepository;
 
     @Override
-    public List<StatisticsDTO> getStatistics(Integer year) {
-        List<StatisticsDTO> statistics =
-                new ArrayList<>(Arrays.asList(new StatisticsDTO(), new StatisticsDTO(), new StatisticsDTO()));
+    public List<StatisticsDTO> getYearlyReview(Integer year) {
 
-        for(ReportStatus status : reportStatusService.getAllStatuses()) {
-            statistics.get(status.getId().intValue() - 1).setName(status.getName());
-            statistics.get(status.getId().intValue() - 1).setData(getReportCountByReportStatus(status, year));
-        }
-
-        return statistics;
+        return new ArrayList<>(Arrays.asList(
+                new StatisticsDTO("Poslan", getReportCountByReportStatusSent(year)),
+                new StatisticsDTO("U procesu", getReportCountByReportStatusInProcess(year)),
+                new StatisticsDTO("Završen", getReportCountByReportStatusCompleted(year))));
     }
-
 
     @Override
     public StatisticsDTO getStatisticsByDepartment(Integer year, DepartmentService departmentService) {
@@ -70,13 +62,13 @@ public class StatisticsServiceImpl implements StatisticsService {
         return  values;
     }
 
-    private List<Double> getReportCountByReportStatus(ReportStatus reportStatus, Integer year) {
+    private List<Double> getReportCountByReportStatusSent(Integer year) {
         List<Double> values = new ArrayList<>();
 
         for(Month month : Month.values()) {
             values.add((double) reportRepository.findAll()
                     .stream()
-                    .filter(r -> r.getReportStatus().equals(reportStatus)
+                    .filter(r -> r.getCreatedAt() != null
                             && r.getCreatedAt().getMonth().equals(month)
                             && r.getCreatedAt().getYear() == year)
                     .count());
@@ -84,4 +76,35 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         return values;
     }
+
+    private List<Double> getReportCountByReportStatusCompleted(Integer year) {
+        List<Double> values = new ArrayList<>();
+
+        for(Month month : Month.values()) {
+            values.add((double) reportRepository.findAll()
+                    .stream()
+                    .filter(r -> r.getProcessed() != null
+                            && r.getProcessed().getMonth().equals(month)
+                            && r.getProcessed().getYear() == year)
+                    .count());
+        }
+
+        return values;
+    }
+
+    private List<Double> getReportCountByReportStatusInProcess(Integer year) {
+        List<Double> values = new ArrayList<>();
+
+        for(Month month : Month.values()) {
+            values.add((double) reportRepository.findAll()
+                    .stream()
+                    .filter(r -> r.getMovedToInProcess() != null
+                            && r.getMovedToInProcess().getMonth().equals(month)
+                            && r.getMovedToInProcess().getYear() == year)
+                    .count());
+        }
+
+        return values;
+    }
+
 }

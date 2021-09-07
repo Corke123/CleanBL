@@ -18,8 +18,8 @@ public class StatisticsController {
     private final DepartmentServiceRepository departmentServiceRepository;
 
     @GetMapping
-    public ResponseEntity<List<StatisticsDTO>> getStatistics(@RequestParam Integer year) {
-        return ResponseEntity.ok(statisticsService.getStatistics(year));
+    public ResponseEntity<List<StatisticsDTO>> getYearlyReview(@RequestParam Integer year) {
+        return ResponseEntity.ok(statisticsService.getYearlyReview(year));
     }
 
     @GetMapping("/by-department-service")
@@ -29,5 +29,4 @@ public class StatisticsController {
                .map(departmentService -> ResponseEntity.ok(statisticsService.getStatisticsByDepartment(year, departmentService)))
                .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
 }
