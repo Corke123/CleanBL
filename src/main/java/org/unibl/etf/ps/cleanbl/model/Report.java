@@ -45,6 +45,8 @@ public class Report {
 
     private LocalDateTime processed;
 
+    private LocalDateTime movedToInProcess;
+
     private BigDecimal latitude;
 
     private BigDecimal longitude;

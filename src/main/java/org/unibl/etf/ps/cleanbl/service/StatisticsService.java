@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface StatisticsService {
 
-    List<StatisticsDTO> getStatistics(Integer year);
-    public StatisticsDTO getStatisticsByDepartment(Integer year, DepartmentService departmentService);
+    List<StatisticsDTO> getYearlyReview(Integer year);
+    StatisticsDTO getStatisticsByDepartment(Integer year, DepartmentService departmentService);
 }
