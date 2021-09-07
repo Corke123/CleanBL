@@ -26,4 +26,5 @@ public interface ReportService {
     Double rateReport(Report report, EvaluatesRequest evaluatesRequest);
     Double getGrade(Report report);
     boolean isUserRatedReport(Report report);
+    List<Report> getAllReports();
 }

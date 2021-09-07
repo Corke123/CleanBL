@@ -225,6 +225,11 @@ public class ReportServiceImpl implements ReportService {
         return evaluatesRepository.existsByReportAndUser(report.getId(), user.getId());
     }
 
+    @Override
+    public List<Report> getAllReports() {
+        return reportRepository.findAll();
+    }
+
     public Report setDepartmentServiceAndMoveToInProcess(Report report,
                                                          org.unibl.etf.ps.cleanbl.model.DepartmentService departmentService) {
         log.info("Set department service with name: " + departmentService.getName()

@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.unibl.etf.ps.cleanbl.dto.*;
 import org.unibl.etf.ps.cleanbl.mapper.CommentMapper;
+import org.unibl.etf.ps.cleanbl.mapper.LocationsMapper;
 import org.unibl.etf.ps.cleanbl.mapper.ReportMapper;
 import org.unibl.etf.ps.cleanbl.model.Comment;
 import org.unibl.etf.ps.cleanbl.model.Report;
@@ -39,6 +40,7 @@ public class ReportController {
     private final UserService userService;
     private final DepartmentService departmentService;
     private final DepartmentServiceService departmentServiceService;
+    private final LocationsMapper locationsMapper;
 
     @GetMapping
     public ResponseEntity<Page<ReportResponse>> getAllReports(ReportPage reportPage, ReportSearchCriteria reportSearchCriteria) {
@@ -159,6 +161,11 @@ public class ReportController {
         return reportService.getReport(reportId)
                 .map(report -> ResponseEntity.ok(reportService.rateReport(report, evaluatesRequest)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/location")
+    public ResponseEntity<List<LocationsDTO>> getLocations() {
+        return ResponseEntity.ok(reportService.getAllReports().stream().map(locationsMapper::toDTO).collect(Collectors.toList()));
     }
 
     private ReportResponse createReportResponseFromReport(Report report) {
