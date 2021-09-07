@@ -235,6 +235,7 @@ public class ReportServiceImpl implements ReportService {
         log.info("Set department service with name: " + departmentService.getName()
                 + " to report with id: " + report.getId());
         Report inProcessReport = reportRepository.save(report.toBuilder().departmentService(departmentService)
+                .movedToInProcess(LocalDateTime.now())
                 .reportStatus(reportStatusService.getInProcessStatus()).build());
 
         sendMail(IN_PROCESS_MESSAGE, REPORT_LINK_USER + report.getId(), report.getUser().getEmail());
