@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
@@ -17,5 +18,12 @@ public class Evaluates {
     @EmbeddedId
     private EvaluatesId id;
 
+    private LocalDateTime gradedAt;
+
     private int grade;
+
+    @PrePersist
+    public void placedAt() {
+        gradedAt = LocalDateTime.now();
+    }
 }

@@ -1,0 +1,1 @@
+ALTER TABLE Evaluates ADD gradedAt DATETIME;
