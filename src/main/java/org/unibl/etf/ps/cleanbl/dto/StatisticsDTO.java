@@ -11,5 +11,5 @@ import java.util.List;
 @NoArgsConstructor
 public class StatisticsDTO {
     private String name;
-    private List<Integer> data;
+    private List<Double> data;
 }
