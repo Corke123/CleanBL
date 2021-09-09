@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.unibl.etf.ps.cleanbl.dto.DepartmentServiceDTO;
 import org.unibl.etf.ps.cleanbl.mapper.DepartmentServiceMapper;
+import org.unibl.etf.ps.cleanbl.model.DepartmentService;
 import org.unibl.etf.ps.cleanbl.service.DepartmentServiceService;
 
 import java.util.List;
@@ -23,6 +24,13 @@ public class DepartmentServiceController {
     public ResponseEntity<List<DepartmentServiceDTO>> getDepartmentsServiceDTO() {
         return ResponseEntity.ok(departmentServiceService.getDepartmentServicesForUsersDepartment().stream()
                 .map(departmentServiceMapper::toDTO)
+                .collect(Collectors.toList()));
+    }
+
+    @GetMapping("/names")
+    public ResponseEntity<List<String>> getDepartmentServicesNames() {
+        return ResponseEntity.ok(departmentServiceService.getAll().stream()
+                .map(DepartmentService::getName)
                 .collect(Collectors.toList()));
     }
 }
